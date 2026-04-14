@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Dashboard</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        *{
+            box-sizing:border-box;
+        }
+
+        body{
+            margin:0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(90deg,#1ec7d8,#d9e021);
+            min-height:100vh;
+        }
+
+        .topbar{
+            text-align:center;
+            padding:20px;
+            font-size:28px;
+            font-weight:bold;
+            color:#111;
+        }
+
+        .logout{
+            position:absolute;
+            right:25px;
+            top:20px;
+            background:#ffffff;
+            padding:8px 16px;
+            border-radius:8px;
+            text-decoration:none;
+            color:black;
+            font-weight:bold;
+            border:none;
+            cursor:pointer;
+        }
+
+        .container{
+            display:flex;
+            justify-content:space-around;
+            flex-wrap:wrap;
+            gap:20px;
+            padding:20px;
+        }
+
+        .card{
+            background:rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+            padding:25px;
+            border-radius:15px;
+            width:42%;
+            min-width:320px;
+            box-shadow:0 0 15px rgba(0,0,0,0.2);
+        }
+
+        .card h3{
+            margin-top:0;
+            text-align:center;
+        }
+
+        ul{
+            list-style:none;
+            padding:0;
+        }
+
+        li{
+            background:rgba(255,255,255,0.6);
+            padding:12px;
+            margin:8px 0;
+            border-radius:10px;
+        }
+
+        .form-card{
+            width:50%;
+            min-width:320px;
+            margin:30px auto 60px auto;
+            text-align:center;
+        }
+
+        input{
+            width:80%;
+            padding:10px;
+            margin:8px;
+            border-radius:8px;
+            border:1px solid #ccc;
+            font-size:14px;
+        }
+
+        button{
+            padding:10px 20px;
+            border:none;
+            border-radius:8px;
+            background:#1aa860;
+            color:white;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#158f50;
+        }
+
+        .hidden{
+            display:none;
+        }
+
+        @media(max-width:900px){
+            .card{width:90%;}
+            .form-card{width:90%;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    Welcome {{ request.user.username }}
+</div>
+
+<form method="POST" action="{% url 'logout' %}" style="position:absolute; right:25px; top:20px;">
+    {% csrf_token %}
+    <button type="submit" class="logout">Logout</button>
+</form>
+
+<div class="container">
+    <div class="card">
+        <h3>Monthly Expenses</h3>
+        <canvas id="expenseChart"></canvas>
+    </div>
+
+    <div class="card">
+        <h3>Expense List</h3>
+        <ul>
+            {% for e in expenses %}
+            <li>
+                <strong>{{ e.name }}</strong><br>
+                Amount: ₹{{ e.amount }}<br>
+                Date: {{ e.date }}
+
+                {% if e.is_long_term %}
+                <br>
+                <small>
+                    End Date: {{ e.end_date }} |
+                    Interest: {{ e.interest_rate }}%
+                </small>
+                {% endif %}
+            </li>
+            {% empty %}
+            <li>No expenses added yet</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<div class="card form-card">
+    <h3>Add Expense / Long Term Liability</h3>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="text" name="name" placeholder="Expense Name" required><br>
+        <input type="number" name="amount" step="0.01" placeholder="Amount" required><br>
+        <input type="date" name="date" required><br>
+
+        <label>
+            <input type="checkbox" id="longterm" name="is_long_term">
+            Long Term Liability
+        </label>
+
+        <div id="longFields" class="hidden">
+            <input type="date" name="end_date"><br>
+            <input type="number" name="interest_rate" step="0.01" placeholder="Interest Rate (%)"><br>
+        </div>
+
+        <br>
+        <button type="submit">Add Expense</button>
+    </form>
+</div>
+
+<script>
+document.getElementById("longterm").addEventListener("change", function(){
+    const longFields = document.getElementById("longFields");
+    if(this.checked){
+        longFields.style.display = "block";
+    } else {
+        longFields.style.display = "none";
+    }
+});
+
+const labels = JSON.parse('{{ labels|escapejs }}');
+const data = JSON.parse('{{ data|escapejs }}');
+
+const ctx = document.getElementById('expenseChart').getContext('2d');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Monthly Expenses',
+            data: data,
+            backgroundColor: 'rgba(0,128,0,0.7)',
+            borderRadius: 6
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+
+</body>
+</html>
