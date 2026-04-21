@@ -3,206 +3,592 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            background: #f5f7fb;
-            font-family: 'Poppins', sans-serif;
+        :root{
+            --bg:#f4f7fb;
+            --card:#ffffff;
+            --text:#162033;
+            --muted:#6b7280;
+            --line:#e8edf5;
+
+            --primary:#2563eb;
+            --primary-soft:#eaf1ff;
+
+            --success:#16a34a;
+            --success-soft:#ebfff1;
+
+            --warning:#f59e0b;
+            --warning-soft:#fff7e8;
+
+            --violet:#7c3aed;
+            --violet-soft:#f3edff;
+
+            --cyan:#0891b2;
+            --cyan-soft:#e8fbff;
+
+            --rose:#ef4444;
+            --rose-soft:#fff1f2;
+
+            --shadow:0 10px 30px rgba(15, 23, 42, 0.08);
+            --radius:24px;
         }
 
-        .navbar-custom {
-            background: #ffffff;
-            border-radius: 22px;
-            margin: 20px auto;
-            width: 92%;
-            padding: 14px 28px;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+        *{
+            box-sizing:border-box;
         }
 
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 22px;
-            color: #111;
+        body{
+            background:linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+            font-family:'Poppins',sans-serif;
+            color:var(--text);
+            min-height:100vh;
         }
 
-        .nav-link-custom {
-            position: relative;
-            color: #2f2f2f;
-            font-weight: 500;
-            text-decoration: none;
-            padding: 8px 2px;
-            transition: 0.3s ease;
+        .navbar-custom{
+            background:rgba(255,255,255,0.96);
+            backdrop-filter:blur(14px);
+            border:1px solid rgba(255,255,255,0.7);
+            border-radius:28px;
+            margin:20px auto;
+            width:92%;
+            padding:14px 28px;
+            box-shadow:0 12px 35px rgba(15,23,42,.08);
         }
 
-        .nav-link-custom:hover {
-            color: #0d6efd;
+        .navbar-brand{
+            font-weight:700;
+            font-size:32px;
+            letter-spacing:-0.6px;
+            color:#0f172a;
         }
 
-        .nav-link-custom::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: -6px;
-            width: 0;
-            height: 3px;
-            background: #0d6efd;
-            border-radius: 20px;
-            transition: width 0.3s ease;
+        .nav-link-custom{
+            position:relative;
+            color:#263247;
+            font-weight:500;
+            text-decoration:none;
+            padding:8px 4px;
+            transition:.25s ease;
         }
 
-        .nav-link-custom:hover::after {
-            width: 100%;
+        .nav-link-custom:hover{
+            color:var(--primary);
         }
 
-        .active-link {
-            color: #0d6efd !important;
-            font-weight: 600;
+        .nav-link-custom::after{
+            content:"";
+            position:absolute;
+            left:0;
+            bottom:-8px;
+            width:0;
+            height:3px;
+            background:var(--primary);
+            border-radius:99px;
+            transition:width .25s ease;
         }
 
-        .active-link::after {
-            width: 100%;
+        .nav-link-custom:hover::after,
+        .active-link::after{
+            width:100%;
         }
 
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #f8f9fc;
-            border: 1px solid #e9ecef;
-            padding: 8px 14px;
-            border-radius: 999px;
+        .active-link{
+            color:var(--primary) !important;
+            font-weight:600;
         }
 
-        .user-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #0d6efd, #6f42c1);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
+        .user-badge{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            background:#f8fbff;
+            border:1px solid var(--line);
+            padding:8px 14px 8px 8px;
+            border-radius:999px;
+            box-shadow:0 6px 16px rgba(15,23,42,.04);
         }
 
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #222;
-            margin: 0;
+        .user-avatar{
+            width:38px;
+            height:38px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#2563eb,#7c3aed);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+            font-size:15px;
         }
 
-        .logout-icon-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            border: none;
-            background: #fff1f2;
-            color: #dc3545;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 19px;
-            transition: 0.3s ease;
+        .user-name{
+            font-size:14px;
+            font-weight:600;
+            color:#111827;
+            margin:0;
         }
 
-        .logout-icon-btn:hover {
-            background: #dc3545;
-            color: #fff;
-            transform: translateY(-1px);
+        .logout-icon-btn{
+            width:46px;
+            height:46px;
+            border-radius:50%;
+            border:none;
+            background:var(--rose-soft);
+            color:var(--rose);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:19px;
+            transition:.25s ease;
         }
 
-        .card-box {
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.05);
+        .logout-icon-btn:hover{
+            background:var(--rose);
+            color:#fff;
+            transform:translateY(-1px);
         }
 
-        .summary-card {
-            padding: 22px;
-            border-radius: 20px;
-            color: #fff;
-            min-height: 120px;
+        .page-wrap{
+            width:min(1140px, 92%);
+            margin:28px auto 50px;
         }
 
-        .summary-card h6 {
-            font-size: 15px;
-            margin-bottom: 10px;
-            opacity: 0.95;
+        .page-head{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:20px;
+            flex-wrap:wrap;
+            margin-bottom:24px;
         }
 
-        .summary-card h3 {
-            font-size: 32px;
-            font-weight: 700;
-            margin: 0;
+        .welcome-title{
+            font-size:36px;
+            font-weight:700;
+            letter-spacing:-0.8px;
+            margin:0;
+            color:#0f172a;
         }
 
-        .bg1 { background: linear-gradient(135deg, #0d6efd, #3d8bfd); }
-        .bg2 { background: linear-gradient(135deg, #198754, #20a56b); }
-        .bg3 { background: linear-gradient(135deg, #fd7e14, #ff9838); }
-        .bg4 { background: linear-gradient(135deg, #6f42c1, #8b5cf6); }
-
-        .welcome-title {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 24px;
-            color: #1f2937;
+        .welcome-subtitle{
+            margin-top:6px;
+            color:var(--muted);
+            font-size:14px;
         }
 
-        .form-control {
-            border-radius: 12px;
-            padding: 12px 14px;
+        .head-chip{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            background:#ffffff;
+            border:1px solid var(--line);
+            border-radius:999px;
+            padding:10px 16px;
+            font-size:13px;
+            font-weight:600;
+            color:#334155;
+            box-shadow:0 6px 18px rgba(15,23,42,.05);
         }
 
-        .btn-success {
-            border-radius: 12px;
-            padding: 10px 18px;
-            font-weight: 600;
+        .stats-row{
+            display:grid;
+            grid-template-columns:repeat(4, 1fr);
+            gap:18px;
+            margin-bottom:24px;
         }
 
-        .list-group-item {
-            border-radius: 12px !important;
-            margin-bottom: 10px;
-            border: 1px solid #eef0f4;
+        .stat-card{
+            border:none;
+            border-radius:24px;
+            color:#fff;
+            padding:22px 24px;
+            min-height:132px;
+            box-shadow:var(--shadow);
+            position:relative;
+            overflow:hidden;
         }
 
-        .modal-content {
-            border-radius: 20px;
-            border: none;
-            box-shadow: 0 14px 40px rgba(0,0,0,0.15);
+        .stat-card::after{
+            content:"";
+            position:absolute;
+            right:-30px;
+            top:-30px;
+            width:110px;
+            height:110px;
+            border-radius:50%;
+            background:rgba(255,255,255,.10);
         }
 
-        .modal-header {
-            border-bottom: none;
-            padding-bottom: 0;
+        .stat-card h6{
+            font-size:15px;
+            font-weight:500;
+            margin-bottom:12px;
+            opacity:.95;
         }
 
-        .modal-footer {
-            border-top: none;
+        .stat-card h3{
+            font-size:34px;
+            font-weight:700;
+            margin:0;
+            letter-spacing:-0.5px;
         }
 
-        .btn-cancel {
-            border-radius: 10px;
-            padding: 10px 18px;
-            font-weight: 600;
+        .bg-primary-grad{
+            background:linear-gradient(135deg,#2563eb,#1d4ed8);
         }
 
-        .btn-confirm-logout {
-            border-radius: 10px;
-            padding: 10px 18px;
-            font-weight: 600;
-            background: #dc3545;
-            color: #fff;
-            border: none;
+        .bg-success-grad{
+            background:linear-gradient(135deg,#16a34a,#15803d);
         }
 
-        .btn-confirm-logout:hover {
-            background: #bb2d3b;
+        .bg-warning-grad{
+            background:linear-gradient(135deg,#ff8a1c,#f97316);
+        }
+
+        .bg-violet-grad{
+            background:linear-gradient(135deg,#7c3aed,#6d28d9);
+        }
+
+        .card-box{
+            background:var(--card);
+            border:1px solid rgba(232,237,245,.8);
+            border-radius:28px;
+            box-shadow:var(--shadow);
+        }
+
+        .section-title{
+            font-size:28px;
+            font-weight:700;
+            margin-bottom:6px;
+            letter-spacing:-0.5px;
+            color:#0f172a;
+        }
+
+        .section-subtitle{
+            color:var(--muted);
+            font-size:14px;
+            margin-bottom:22px;
+        }
+
+        .content-grid{
+            display:grid;
+            grid-template-columns:1.05fr .95fr;
+            gap:22px;
+        }
+
+        .chart-wrap{
+            min-height:420px;
+        }
+
+        .analysis-bar{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            margin-bottom:18px;
+        }
+
+        .analysis-chip{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            border-radius:999px;
+            padding:9px 14px;
+            font-size:13px;
+            font-weight:600;
+        }
+
+        .analysis-blue{
+            background:#eef6ff;
+            color:#1d4ed8;
+        }
+
+        .analysis-green{
+            background:#eefdf3;
+            color:#15803d;
+        }
+
+        .analysis-orange{
+            background:#fff7e8;
+            color:#c97700;
+        }
+
+        .analysis-violet{
+            background:#f3edff;
+            color:#6d28d9;
+        }
+
+        .chart-card-shell{
+            background:linear-gradient(180deg,#fcfdff,#f7faff);
+            border:1px solid #e6edf7;
+            border-radius:22px;
+            padding:18px;
+        }
+
+        .form-label.custom-label{
+            font-weight:600;
+            color:#1f2937;
+            margin-bottom:10px;
+        }
+
+        .form-control{
+            border-radius:16px !important;
+            padding:14px 16px !important;
+            border:1px solid #dbe4f0 !important;
+            background:#fff !important;
+            transition:.25s ease;
+            font-size:15px;
+        }
+
+        .form-control:focus{
+            border-color:#2563eb !important;
+            box-shadow:0 0 0 4px rgba(37,99,235,.12) !important;
+        }
+
+        .helper-text{
+            color:var(--muted);
+            font-size:13px;
+            margin-top:7px;
+        }
+
+        .check-wrap{
+            background:#f8fbff;
+            border:1px solid #e4edf8;
+            border-radius:18px;
+            padding:14px 16px;
+        }
+
+        .form-check-label{
+            font-weight:600;
+            color:#1f2937;
+        }
+
+        .primary-action-btn{
+            border:none;
+            border-radius:16px;
+            padding:13px 20px;
+            font-weight:600;
+            color:#fff;
+            background:linear-gradient(135deg,#16a34a,#22c55e);
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            transition:.25s ease;
+            box-shadow:0 10px 22px rgba(34,197,94,.18);
+        }
+
+        .primary-action-btn:hover{
+            transform:translateY(-1px);
+            box-shadow:0 14px 28px rgba(34,197,94,.24);
+        }
+
+        .recent-wrap{
+            margin-top:24px;
+        }
+
+        .recent-head{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:14px;
+            flex-wrap:wrap;
+            margin-bottom:18px;
+        }
+
+        .recent-title{
+            font-size:26px;
+            font-weight:700;
+            margin:0;
+            color:#0f172a;
+        }
+
+        .recent-count{
+            background:#eff6ff;
+            color:#1d4ed8;
+            border-radius:999px;
+            padding:8px 14px;
+            font-size:13px;
+            font-weight:600;
+        }
+
+        .expense-list{
+            display:grid;
+            gap:14px;
+        }
+
+        .expense-item{
+            border:1px solid #e8edf5;
+            border-radius:22px;
+            padding:18px 20px;
+            background:#fff;
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:16px;
+            flex-wrap:wrap;
+            transition:.25s ease;
+        }
+
+        .expense-item:hover{
+            transform:translateY(-2px);
+            box-shadow:0 10px 28px rgba(15,23,42,.06);
+        }
+
+        .expense-left{
+            min-width:0;
+        }
+
+        .expense-name{
+            font-size:20px;
+            font-weight:700;
+            color:#0f172a;
+            margin-bottom:6px;
+        }
+
+        .expense-meta{
+            color:var(--muted);
+            font-size:14px;
+            line-height:1.8;
+        }
+
+        .expense-right{
+            text-align:right;
+            min-width:160px;
+        }
+
+        .expense-amount{
+            font-size:22px;
+            font-weight:700;
+            color:#0f172a;
+            margin-bottom:8px;
+        }
+
+        .tag{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            border-radius:999px;
+            padding:8px 12px;
+            font-size:12px;
+            font-weight:700;
+        }
+
+        .tag-long{
+            background:#fff7e8;
+            color:#c97700;
+        }
+
+        .tag-normal{
+            background:#eefdf3;
+            color:#15803d;
+        }
+
+        .empty-state{
+            text-align:center;
+            padding:42px 18px;
+            color:var(--muted);
+            border:1px dashed #d7e1ee;
+            border-radius:24px;
+            background:#fbfdff;
+        }
+
+        .empty-state i{
+            font-size:30px;
+            color:#94a3b8;
+        }
+
+        .empty-state h5{
+            margin-top:14px;
+            font-weight:700;
+            color:#334155;
+        }
+
+        .modal-content{
+            border-radius:26px;
+            border:none;
+            box-shadow:0 20px 55px rgba(15,23,42,.18);
+            overflow:hidden;
+        }
+
+        .modal-header{
+            border-bottom:1px solid #edf2f8;
+            padding:22px 24px 16px;
+        }
+
+        .modal-body{
+            padding:18px 24px 8px;
+            color:#475569;
+        }
+
+        .modal-footer{
+            border-top:1px solid #edf2f8;
+            padding:16px 24px 22px;
+        }
+
+        .btn-cancel{
+            background:#f1f5f9;
+            border:none;
+            color:#0f172a;
+            border-radius:14px;
+            font-weight:600;
+            padding:10px 18px;
+        }
+
+        .btn-confirm-logout{
+            background:linear-gradient(135deg,#ef4444,#dc2626);
+            border:none;
+            color:#fff;
+            border-radius:14px;
+            font-weight:600;
+            padding:10px 18px;
+        }
+
+        @media (max-width: 1100px){
+            .stats-row{
+                grid-template-columns:repeat(2, 1fr);
+            }
+
+            .content-grid{
+                grid-template-columns:1fr;
+            }
+        }
+
+        @media (max-width: 768px){
+            .navbar-custom{
+                width:95%;
+                padding:16px 18px;
+            }
+
+            .page-wrap{
+                width:95%;
+            }
+
+            .navbar-brand{
+                font-size:26px;
+            }
+
+            .welcome-title{
+                font-size:28px;
+            }
+
+            .stats-row{
+                grid-template-columns:1fr;
+            }
+
+            .expense-item{
+                flex-direction:column;
+            }
+
+            .expense-right{
+                text-align:left;
+                min-width:auto;
+            }
         }
     </style>
 </head>
@@ -214,117 +600,197 @@
 
         <div class="d-flex align-items-center gap-4 ms-auto flex-wrap">
             <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">Dashboard</a>
-            <a href="{% url 'friends_list' %}" class="nav-link-custom {% if request.path == '/friends/' %}active-link{% endif %}">Friends</a>
-            <a href="{% url 'groups_list' %}" class="nav-link-custom {% if request.path == '/groups/' %}active-link{% endif %}">Groups</a>
-            <a href="{% url 'split_expense' %}" class="nav-link-custom {% if request.path == '/split-expense/' %}active-link{% endif %}">Split Expense</a>
-            <a href="{% url 'settlements' %}" class="nav-link-custom {% if request.path == '/settlements/' %}active-link{% endif %}">Settlements</a>
+            <a href="{% url 'groups_list' %}" class="nav-link-custom {% if '/groups/' in request.path %}active-link{% endif %}">Groups</a>
+            <a href="{% url 'friends_list' %}" class="nav-link-custom {% if '/friends/' in request.path %}active-link{% endif %}">Friends</a>
+            <a href="{% url 'split_expense' %}" class="nav-link-custom {% if '/split-expense/' in request.path %}active-link{% endif %}">Split Expense</a>
+            <a href="{% url 'settlements' %}" class="nav-link-custom {% if '/settlements/' in request.path %}active-link{% endif %}">Settlements</a>
 
             <div class="user-badge">
                 <div class="user-avatar">{{ request.user.username|first|upper }}</div>
                 <p class="user-name mb-0">{{ request.user.username }}</p>
             </div>
 
-            <button type="button" class="logout-icon-btn" data-bs-toggle="modal" data-bs-target="#logoutModal" title="Logout">
+            <button type="button" class="logout-icon-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">
                 <i class="bi bi-box-arrow-right"></i>
             </button>
         </div>
     </div>
 </nav>
 
-<div class="container">
-    <div class="welcome-title">Welcome, {{ request.user.username }}</div>
+<div class="page-wrap">
+    <div class="page-head">
+        <div>
+            <h1 class="welcome-title">Welcome, {{ request.user.username }}</h1>
+            <div class="welcome-subtitle">Monitor your spending, visualize trends, and manage liabilities with a cleaner analytics-focused dashboard.</div>
+        </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="summary-card bg1">
-                <h6>Total Personal Expenses</h6>
-                <h3>₹{{ total_personal }}</h3>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="summary-card bg2">
-                <h6>Total Friends</h6>
-                <h3>{{ total_friends }}</h3>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="summary-card bg3">
-                <h6>Active Groups</h6>
-                <h3>{{ total_groups }}</h3>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="summary-card bg4">
-                <h6>Split Expenses</h6>
-                <h3>{{ total_split_expenses }}</h3>
-            </div>
+        <div class="head-chip">
+            <i class="bi bi-bar-chart-line"></i>
+            Personal Finance Overview
         </div>
     </div>
 
-    <div class="row g-4">
-        <div class="col-lg-6">
-            <div class="card card-box p-4">
-                <h4 class="mb-3">Monthly Expenses</h4>
-                <canvas id="expenseChart"></canvas>
+    <div class="stats-row">
+        <div class="stat-card bg-primary-grad">
+            <h6>Total Personal Expenses</h6>
+            <h3>₹{{ total_personal }}</h3>
+        </div>
+        <div class="stat-card bg-success-grad">
+            <h6>Total Friends</h6>
+            <h3>{{ total_friends }}</h3>
+        </div>
+        <div class="stat-card bg-warning-grad">
+            <h6>Active Groups</h6>
+            <h3>{{ total_groups }}</h3>
+        </div>
+        <div class="stat-card bg-violet-grad">
+            <h6>Split Expenses</h6>
+            <h3>{{ total_split_expenses }}</h3>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <div class="card-box p-4 p-md-5 chart-wrap">
+            <div class="section-title">Monthly Expense Analysis</div>
+            <div class="section-subtitle">A colorful trend view of your monthly personal expenses.</div>
+
+            <div class="analysis-bar">
+                <div class="analysis-chip analysis-blue">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    Monthly Trend
+                </div>
+                <div class="analysis-chip analysis-green">
+                    <i class="bi bi-wallet2"></i>
+                    Spending Insight
+                </div>
+                <div class="analysis-chip analysis-orange">
+                    <i class="bi bi-lightning-charge"></i>
+                    Quick Overview
+                </div>
+                <div class="analysis-chip analysis-violet">
+                    <i class="bi bi-pie-chart"></i>
+                    Visual Analytics
+                </div>
+            </div>
+
+            <div class="chart-card-shell">
+                <canvas id="expenseChart" height="150"></canvas>
             </div>
         </div>
 
-        <div class="col-lg-6">
-            <div class="card card-box p-4">
-                <h4 class="mb-3">Add Personal Expense</h4>
+        <div class="card-box p-4 p-md-5">
+            <div class="section-title">Add Personal Expense</div>
+            <div class="section-subtitle">Add a new expense and track long-term liabilities with extra details.</div>
 
-                <form method="POST">
-                    {% csrf_token %}
-                    <input type="text" name="name" class="form-control mb-3" placeholder="Expense Name" required>
-                    <input type="number" name="amount" step="0.01" class="form-control mb-3" placeholder="Amount" required>
-                    <input type="date" name="date" class="form-control mb-3" required>
+            <form method="POST">
+                {% csrf_token %}
 
-                    <div class="form-check mb-3">
+                <div class="mb-3">
+                    <label class="form-label custom-label">Expense Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="Enter expense name" required>
+                    <div class="helper-text">Example: Rent, Groceries, Course Fee, Internet Bill.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label custom-label">Amount</label>
+                    <input type="number" name="amount" step="0.01" class="form-control" placeholder="Enter amount" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label custom-label">Date</label>
+                    <input type="date" name="date" class="form-control" required>
+                </div>
+
+                <div class="check-wrap mb-3">
+                    <div class="form-check mb-0">
                         <input type="checkbox" id="longterm" name="is_long_term" class="form-check-input">
-                        <label class="form-check-label" for="longterm">Long Term Liability</label>
+                        <label class="form-check-label" for="longterm">Mark as Long Term Liability</label>
+                    </div>
+                </div>
+
+                <div id="longFields" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label custom-label">End Date</label>
+                        <input type="date" name="end_date" class="form-control">
                     </div>
 
-                    <div id="longFields" style="display:none;">
-                        <input type="date" name="end_date" class="form-control mb-3">
-                        <input type="number" name="interest_rate" class="form-control mb-3" placeholder="Interest Rate (%)">
+                    <div class="mb-3">
+                        <label class="form-label custom-label">Interest Rate (%)</label>
+                        <input type="number" name="interest_rate" class="form-control" placeholder="Enter interest rate">
                     </div>
+                </div>
 
-                    <button class="btn btn-success">Add Expense</button>
-                </form>
-            </div>
+                <button class="primary-action-btn" type="submit">
+                    <i class="bi bi-plus-circle"></i>
+                    Add Expense
+                </button>
+            </form>
         </div>
     </div>
 
-    <div class="card card-box p-4 mt-4">
-        <h4 class="mb-3">Recent Expenses</h4>
-        <ul class="list-group">
-            {% for e in expenses %}
-            <li class="list-group-item">
-                <strong>{{ e.name }}</strong> - ₹{{ e.amount }} - {{ e.date }}
-                {% if e.is_long_term %}
-                <br>
-                <small class="text-muted">End Date: {{ e.end_date }} | Interest: {{ e.interest_rate }}%</small>
-                {% endif %}
-            </li>
-            {% empty %}
-            <li class="list-group-item">No expenses yet</li>
-            {% endfor %}
-        </ul>
+    <div class="recent-wrap">
+        <div class="card-box p-4 p-md-5">
+            <div class="recent-head">
+                <h2 class="recent-title">Recent Expenses</h2>
+                <div class="recent-count">{{ expenses|length }} record{{ expenses|length|pluralize }}</div>
+            </div>
+
+            {% if expenses %}
+            <div class="expense-list">
+                {% for e in expenses %}
+                <div class="expense-item">
+                    <div class="expense-left">
+                        <div class="expense-name">{{ e.name }}</div>
+                        <div class="expense-meta">
+                            Date: <strong>{{ e.date }}</strong>
+                            {% if e.is_long_term %}
+                                <br>
+                                End Date: <strong>{{ e.end_date }}</strong> |
+                                Interest: <strong>{{ e.interest_rate }}%</strong>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="expense-right">
+                        <div class="expense-amount">₹{{ e.amount }}</div>
+                        {% if e.is_long_term %}
+                            <span class="tag tag-long">
+                                <i class="bi bi-clock-history"></i>
+                                Long Term
+                            </span>
+                        {% else %}
+                            <span class="tag tag-normal">
+                                <i class="bi bi-check-circle"></i>
+                                Standard
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="bi bi-wallet2"></i>
+                <h5>No expenses yet</h5>
+                <div class="mt-2">Add your first expense using the form above.</div>
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 
-<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content p-2">
+        <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title fw-bold">Confirm Logout</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body pt-2">
-                Are you sure you want to logout?
+            <div class="modal-body">
+                Are you sure you want to logout from your account?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light btn-cancel" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">No</button>
                 <form method="POST" action="{% url 'logout' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn-confirm-logout">Yes, Logout</button>
@@ -333,8 +799,6 @@
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 document.getElementById("longterm").addEventListener("change", function () {
@@ -345,7 +809,6 @@ const labels = JSON.parse('{{ labels|escapejs }}');
 const data = JSON.parse('{{ data|escapejs }}');
 
 const ctx = document.getElementById('expenseChart').getContext('2d');
-
 new Chart(ctx, {
     type: 'bar',
     data: {
@@ -353,20 +816,64 @@ new Chart(ctx, {
         datasets: [{
             label: 'Expenses',
             data: data,
-            backgroundColor: '#0d6efd',
-            borderRadius: 8
+            backgroundColor: [
+                '#2563eb',
+                '#16a34a',
+                '#f97316',
+                '#7c3aed',
+                '#0891b2',
+                '#ef4444',
+                '#0ea5e9',
+                '#14b8a6',
+                '#f59e0b',
+                '#8b5cf6',
+                '#22c55e',
+                '#3b82f6'
+            ],
+            borderRadius: 10
         }]
     },
     options: {
         responsive: true,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#334155',
+                    font: {
+                        family: 'Poppins'
+                    }
+                }
+            }
+        },
         scales: {
+            x: {
+                ticks: {
+                    color: '#64748b',
+                    font: {
+                        family: 'Poppins'
+                    }
+                },
+                grid: {
+                    display: false
+                }
+            },
             y: {
-                beginAtZero: true
+                beginAtZero: true,
+                ticks: {
+                    color: '#64748b',
+                    font: {
+                        family: 'Poppins'
+                    }
+                },
+                grid: {
+                    color: '#e8edf5'
+                }
             }
         }
     }
 });
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

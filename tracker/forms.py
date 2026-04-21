@@ -1,30 +1,72 @@
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.db import models
+
 from .models import Expense, Friend, Group, SplitExpense
 
 
 class RegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            "class": "form-control",
+            "placeholder": "Enter email address"
+        })
+    )
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ["username", "email", "password1", "password2"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-class ExpenseForm(forms.ModelForm):
-    class Meta:
-        model = Expense
-        fields = ['name', 'amount', 'date', 'is_long_term', 'end_date', 'interest_rate']
+        self.fields["username"].widget.attrs.update({
+            "class": "form-control",
+            "placeholder": "Enter username"
+        })
+        self.fields["password1"].widget.attrs.update({
+            "class": "form-control",
+            "placeholder": "Enter password"
+        })
+        self.fields["password2"].widget.attrs.update({
+            "class": "form-control",
+            "placeholder": "Confirm password"
+        })
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("An account with this email already exists.")
+        return email
 
 
 class FriendForm(forms.ModelForm):
     class Meta:
         model = Friend
-        fields = ['name']
+        fields = ["name", "email"]
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter friend name'})
+            "name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter friend name"
+            }),
+            "email": forms.EmailInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter email address"
+            }),
         }
+
+    def clean_name(self):
+        name = self.cleaned_data.get("name")
+        if not name:
+            raise forms.ValidationError("Please enter name.")
+        return name.strip()
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if not email:
+            raise forms.ValidationError("Please enter email address.")
+        return email.strip().lower()
 
 
 class GroupForm(forms.ModelForm):
@@ -36,61 +78,138 @@ class GroupForm(forms.ModelForm):
 
     class Meta:
         model = Group
-        fields = ['name', 'members']
+        fields = ["name", "members"]
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter group name'})
+            "name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter group name"
+            }),
         }
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
+        user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
+
         if user:
-            self.fields['members'].queryset = Friend.objects.filter(user=user)
+            qs = Friend.objects.filter(user=user).order_by("name")
+            self.fields["members"].queryset = qs
+
+
+class ExpenseForm(forms.ModelForm):
+    class Meta:
+        model = Expense
+        fields = ["name", "amount", "date", "is_long_term", "end_date", "interest_rate"]
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "amount": forms.NumberInput(attrs={"class": "form-control"}),
+            "date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "end_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "interest_rate": forms.NumberInput(attrs={"class": "form-control"}),
+        }
 
 
 class SplitExpenseForm(forms.ModelForm):
+    selected_participants = forms.ModelMultipleChoiceField(
+        queryset=Friend.objects.none(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
+    custom_split_data = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput(attrs={"id": "custom-split-data"})
+    )
+
+    percentage_split_data = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput(attrs={"id": "percentage-split-data"})
+    )
+
+    paid_by = forms.ModelChoiceField(
+        queryset=Friend.objects.none(),
+        required=False,
+        widget=forms.HiddenInput()
+    )
+
     class Meta:
         model = SplitExpense
-        fields = ['group', 'title', 'total_amount', 'paid_by']
+        fields = [
+            "group",
+            "title",
+            "total_amount",
+            "paid_by",
+            "split_type",
+            "participant_mode",
+            "selected_participants",
+            "include_payer",
+        ]
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Expense title'}),
-            'total_amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'group': forms.Select(attrs={'class': 'form-control', 'id': 'group-select'}),
-            'paid_by': forms.Select(attrs={'class': 'form-control', 'id': 'paid-by-select'}),
+            "group": forms.Select(attrs={"class": "form-control", "id": "group-select"}),
+            "title": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter expense title"}),
+            "total_amount": forms.NumberInput(attrs={"class": "form-control", "placeholder": "Enter total amount"}),
+            "split_type": forms.Select(attrs={"class": "form-control", "id": "split-type-select"}),
+            "participant_mode": forms.Select(attrs={"class": "form-control", "id": "participant-mode-select"}),
+            "include_payer": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
+        user = kwargs.pop("user", None)
+        group = kwargs.pop("group", None)
         super().__init__(*args, **kwargs)
 
-        self.fields['paid_by'].queryset = Friend.objects.none()
+        self.fields["group"].queryset = Group.objects.none()
+        self.fields["paid_by"].queryset = Friend.objects.none()
+        self.fields["selected_participants"].queryset = Friend.objects.none()
 
         if user:
-            self.fields['group'].queryset = Group.objects.filter(user=user)
+            groups = Group.objects.filter(
+                models.Q(user=user) | models.Q(members__linked_user=user)
+            ).distinct().order_by("-created_at")
+            self.fields["group"].queryset = groups
 
-        if 'group' in self.data:
-            try:
-                group_id = int(self.data.get('group'))
-                self.fields['paid_by'].queryset = Friend.objects.filter(groupmember__group_id=group_id).distinct()
-            except (ValueError, TypeError):
-                pass
-        elif self.instance.pk:
-            self.fields['paid_by'].queryset = Friend.objects.filter(
-                groupmember__group=self.instance.group
-            ).distinct()
+        target_group = group
+
+        if not target_group and self.instance and self.instance.pk:
+            target_group = self.instance.group
+
+        if not target_group and self.is_bound:
+            group_id = self.data.get("group")
+            if group_id:
+                target_group = Group.objects.filter(id=group_id).first()
+
+        if target_group:
+            members = target_group.all_group_friends().order_by("name")
+            self.fields["paid_by"].queryset = members
+            self.fields["selected_participants"].queryset = members
+
+            if self.instance and self.instance.pk:
+                self.fields["selected_participants"].initial = self.instance.get_selected_participants()
+
+        if user:
+            friend = Friend.objects.filter(linked_user=user).first()
+            if friend:
+                self.fields["paid_by"].initial = friend
+
+    def clean_total_amount(self):
+        amount = self.cleaned_data.get("total_amount")
+        if amount is None or amount <= 0:
+            raise forms.ValidationError("Total amount must be greater than zero.")
+        return amount
 
     def clean(self):
         cleaned_data = super().clean()
-        group = cleaned_data.get('group')
-        paid_by = cleaned_data.get('paid_by')
 
-        if group and paid_by:
-            is_member = Friend.objects.filter(
-                id=paid_by.id,
-                groupmember__group=group
-            ).exists()
+        participant_mode = cleaned_data.get("participant_mode")
+        selected_participants = cleaned_data.get("selected_participants")
+        split_type = cleaned_data.get("split_type")
 
-            if not is_member:
-                raise forms.ValidationError("Paid by must be a member of the selected group.")
+        if participant_mode == SplitExpense.PARTICIPANT_MODE_SELECTED and not selected_participants:
+            raise forms.ValidationError("Please choose at least one selected participant.")
+
+        if split_type == SplitExpense.SPLIT_TYPE_CUSTOM and not cleaned_data.get("custom_split_data"):
+            raise forms.ValidationError("Custom split data is required.")
+
+        if split_type == SplitExpense.SPLIT_TYPE_PERCENTAGE and not cleaned_data.get("percentage_split_data"):
+            raise forms.ValidationError("Percentage split data is required.")
 
         return cleaned_data

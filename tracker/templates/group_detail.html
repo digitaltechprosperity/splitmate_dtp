@@ -3,165 +3,799 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ group.name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        :root{
+            --bg:#f4f7fb;
+            --card:#ffffff;
+            --text:#162033;
+            --muted:#6b7280;
+            --line:#e8edf5;
+            --primary:#2563eb;
+            --primary-soft:#eaf1ff;
+            --success:#16a34a;
+            --success-soft:#ebfff1;
+            --warning:#f59e0b;
+            --warning-soft:#fff7e8;
+            --danger:#ef4444;
+            --danger-soft:#fff1f2;
+            --violet:#7c3aed;
+            --shadow:0 10px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        *{ box-sizing:border-box; }
+
         body{
-            background:#f4f6fb;
-            font-family:Arial, Helvetica, sans-serif;
+            background:linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+            font-family:'Poppins', sans-serif;
+            color:var(--text);
+            min-height:100vh;
         }
-        .card-box{
-            border:none;
-            border-radius:18px;
-            box-shadow:0 4px 20px rgba(0,0,0,0.06);
+
+        .navbar-custom{
+            background:rgba(255,255,255,0.96);
+            backdrop-filter:blur(14px);
+            border:1px solid rgba(255,255,255,0.7);
+            border-radius:28px;
+            margin:20px auto;
+            width:92%;
+            padding:14px 28px;
+            box-shadow:0 12px 35px rgba(15,23,42,.08);
         }
-        .summary-card{
-            border-radius:18px;
-            padding:20px;
-            color:#fff;
+
+        .navbar-brand{
+            font-weight:700;
+            font-size:32px;
+            letter-spacing:-0.6px;
+            color:#0f172a;
         }
-        .bg1{ background:#0d6efd; }
-        .bg2{ background:#198754; }
-        .bg3{ background:#fd7e14; }
-        .member-pill{
-            display:inline-block;
-            background:#eef3ff;
-            color:#1c3d7a;
-            padding:8px 14px;
-            border-radius:50px;
-            margin:5px 8px 5px 0;
-            font-size:14px;
+
+        .nav-link-custom{
+            position:relative;
+            color:#263247;
+            font-weight:500;
+            text-decoration:none;
+            padding:8px 4px;
+            transition:.25s ease;
+        }
+
+        .nav-link-custom:hover{ color:var(--primary); }
+
+        .nav-link-custom::after{
+            content:"";
+            position:absolute;
+            left:0;
+            bottom:-8px;
+            width:0;
+            height:3px;
+            background:var(--primary);
+            border-radius:99px;
+            transition:width .25s ease;
+        }
+
+        .nav-link-custom:hover::after,
+        .active-link::after{ width:100%; }
+
+        .active-link{
+            color:var(--primary) !important;
             font-weight:600;
         }
-        .split-card{
-            background:#111;
-            color:#fff;
-            border-radius:22px;
-            padding:22px;
-        }
-        .split-item{
+
+        .user-badge{
             display:flex;
-            justify-content:space-between;
             align-items:center;
-            padding:12px 0;
-            border-bottom:1px solid rgba(255,255,255,0.08);
+            gap:12px;
+            background:#f8fbff;
+            border:1px solid var(--line);
+            padding:8px 14px 8px 8px;
+            border-radius:999px;
+            box-shadow:0 6px 16px rgba(15,23,42,.04);
         }
-        .split-item:last-child{
-            border-bottom:none;
-        }
-        .avatar-circle{
-            width:36px;
-            height:36px;
+
+        .user-avatar{
+            width:38px;
+            height:38px;
             border-radius:50%;
-            background:#7c4dff;
+            background:linear-gradient(135deg,#2563eb,#7c3aed);
             color:#fff;
             display:flex;
             align-items:center;
             justify-content:center;
-            font-weight:bold;
-            margin-right:10px;
+            font-weight:700;
+            font-size:15px;
+        }
+
+        .user-name{
+            font-size:14px;
+            font-weight:600;
+            color:#111827;
+            margin:0;
+        }
+
+        .logout-icon-btn{
+            width:46px;
+            height:46px;
+            border-radius:50%;
+            border:none;
+            background:var(--danger-soft);
+            color:var(--danger);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:19px;
+            transition:.25s ease;
+        }
+
+        .logout-icon-btn:hover{
+            background:var(--danger);
+            color:#fff;
+            transform:translateY(-1px);
+        }
+
+        .page-wrap{
+            width:min(1140px, 92%);
+            margin:28px auto 50px;
+        }
+
+        .page-head{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:20px;
+            flex-wrap:wrap;
+            margin-bottom:24px;
+        }
+
+        .page-title{
+            font-size:36px;
+            font-weight:700;
+            letter-spacing:-0.8px;
+            margin:0;
+            color:#0f172a;
+        }
+
+        .page-subtitle{
+            margin-top:6px;
+            color:var(--muted);
+            font-size:14px;
+        }
+
+        .head-actions{
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+
+        .head-btn-primary,
+        .head-btn-secondary{
+            border:none;
+            border-radius:16px;
+            padding:12px 18px;
+            font-weight:600;
+            text-decoration:none;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            transition:.25s ease;
+        }
+
+        .head-btn-primary{
+            color:#fff;
+            background:linear-gradient(135deg,#2563eb,#3b82f6);
+            box-shadow:0 10px 22px rgba(37,99,235,.18);
+        }
+
+        .head-btn-primary:hover{
+            transform:translateY(-1px);
+            box-shadow:0 14px 28px rgba(37,99,235,.24);
+        }
+
+        .head-btn-secondary{
+            color:#0f172a;
+            background:#eef3fb;
+        }
+
+        .head-btn-secondary:hover{ background:#dfe8f7; }
+
+        .stats-row{
+            display:grid;
+            grid-template-columns:repeat(4, 1fr);
+            gap:18px;
+            margin-bottom:22px;
+        }
+
+        .stat-card{
+            border:none;
+            border-radius:24px;
+            color:#fff;
+            padding:22px 24px;
+            min-height:132px;
+            box-shadow:var(--shadow);
+            position:relative;
+            overflow:hidden;
+        }
+
+        .stat-card::after{
+            content:"";
+            position:absolute;
+            right:-30px;
+            top:-30px;
+            width:110px;
+            height:110px;
+            border-radius:50%;
+            background:rgba(255,255,255,.10);
+        }
+
+        .stat-card h6{
+            font-size:15px;
+            font-weight:500;
+            margin-bottom:12px;
+            opacity:.95;
+        }
+
+        .stat-card h3{
+            font-size:30px;
+            font-weight:700;
+            margin:0;
+        }
+
+        .bg-primary-grad{ background:linear-gradient(135deg,#2563eb,#1d4ed8); }
+        .bg-success-grad{ background:linear-gradient(135deg,#16a34a,#15803d); }
+        .bg-warning-grad{ background:linear-gradient(135deg,#ff8a1c,#f97316); }
+        .bg-violet-grad{ background:linear-gradient(135deg,#7c3aed,#6d28d9); }
+
+        .card-box{
+            background:var(--card);
+            border:1px solid rgba(232,237,245,.8);
+            border-radius:28px;
+            box-shadow:var(--shadow);
+        }
+
+        .section-title{
+            font-size:28px;
+            font-weight:700;
+            margin-bottom:6px;
+            color:#0f172a;
+        }
+
+        .section-subtitle{
+            color:var(--muted);
+            font-size:14px;
+            margin-bottom:20px;
+        }
+
+        .member-wrap{
+            display:flex;
+            flex-wrap:wrap;
+            gap:12px;
+        }
+
+        .member-pill{
+            display:inline-flex;
+            align-items:center;
+            gap:10px;
+            background:linear-gradient(180deg,#f8fbff,#eef5ff);
+            color:#1c3d7a;
+            padding:12px 16px;
+            border-radius:999px;
+            font-size:14px;
+            font-weight:600;
+            border:1px solid #dbe8fb;
+            flex-wrap:wrap;
+        }
+
+        .badge-soft{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            border-radius:999px;
+            padding:7px 12px;
+            font-size:12px;
+            font-weight:700;
+        }
+
+        .badge-joined{
+            background:#ebfff1;
+            color:#15803d;
+        }
+
+        .badge-pending{
+            background:#fff7e8;
+            color:#c97700;
+        }
+
+        .badge-equal{
+            background:#ebf4ff;
+            color:#1d4ed8;
+        }
+
+        .badge-custom{
+            background:#fff7e8;
+            color:#c97700;
+        }
+
+        .content-grid{
+            display:grid;
+            grid-template-columns:1.5fr 1fr;
+            gap:22px;
+            margin-top:22px;
+        }
+
+        .expense-list{
+            display:grid;
+            gap:16px;
+        }
+
+        .expense-card{
+            border:1px solid #e8edf5;
+            border-radius:24px;
+            padding:22px;
+            background:#fff;
+        }
+
+        .expense-top{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:18px;
+            flex-wrap:wrap;
+        }
+
+        .expense-title{
+            font-size:22px;
+            font-weight:700;
+            color:#0f172a;
+            margin-bottom:8px;
+        }
+
+        .expense-meta{
+            font-size:14px;
+            color:var(--muted);
+            line-height:1.8;
+        }
+
+        .expense-mini-stats{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            margin-top:12px;
+        }
+
+        .mini-pill{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            border-radius:999px;
+            padding:8px 12px;
+            font-size:12px;
+            font-weight:700;
+        }
+
+        .mini-pill.pending{
+            background:#fff7e8;
+            color:#c97700;
+        }
+
+        .mini-pill.settled{
+            background:#ebfff1;
+            color:#15803d;
+        }
+
+        .action-group{
+            display:flex;
+            gap:10px;
+            align-items:center;
+            flex-wrap:wrap;
+        }
+
+        .mini-btn{
+            border:none;
+            border-radius:14px;
+            padding:10px 14px;
+            font-size:13px;
+            font-weight:600;
+            text-decoration:none;
+            transition:.25s ease;
+        }
+
+        .mini-edit{
+            background:#eef4ff;
+            color:#2563eb;
+        }
+
+        .mini-edit:hover{
+            background:#2563eb;
+            color:#fff;
+        }
+
+        .mini-delete{
+            background:#fff1f2;
+            color:#ef4444;
+        }
+
+        .mini-delete:hover{
+            background:#ef4444;
+            color:#fff;
+        }
+
+        .split-table-wrap{
+            margin-top:18px;
+            border:1px solid #e8edf5;
+            border-radius:18px;
+            overflow:hidden;
+        }
+
+        .split-table{
+            width:100%;
+            margin:0;
+        }
+
+        .split-table thead{ background:#f8fbff; }
+
+        .split-table th{
+            font-size:13px;
+            text-transform:uppercase;
+            letter-spacing:.4px;
+            color:#64748b;
+            font-weight:700;
+            padding:14px 16px;
+            border-bottom:1px solid #e8edf5;
+        }
+
+        .split-table td{
+            padding:16px;
+            border-bottom:1px solid #eef2f7;
+            font-size:15px;
+            color:#0f172a;
+            vertical-align:middle;
+        }
+
+        .split-table tr:last-child td{ border-bottom:none; }
+
+        .settlement-panel{
+            background:linear-gradient(180deg,#ffffff,#f8fbff);
+            border:1px solid #e7edf7;
+            border-radius:28px;
+            box-shadow:var(--shadow);
+            overflow:hidden;
+        }
+
+        .settlement-top{
+            padding:28px 24px 22px;
+            background:linear-gradient(135deg,#f1f7ff,#f8f3ff);
+            border-bottom:1px solid #e7edf7;
+            text-align:center;
+        }
+
+        .settlement-total{
+            font-size:46px;
+            font-weight:700;
+            color:#0f172a;
+            margin:0;
+        }
+
+        .settlement-body{ padding:24px; }
+
+        .settlement-title{
+            font-size:22px;
+            font-weight:700;
+            color:#0f172a;
+            margin-bottom:18px;
+        }
+
+        .settlement-item{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:14px;
+            padding:14px 0;
+            border-bottom:1px solid #eef2f7;
+        }
+
+        .settlement-item:last-child{ border-bottom:none; }
+
+        .settlement-left{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            min-width:0;
+        }
+
+        .avatar-circle{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#7c3aed,#8b5cf6);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+            flex-shrink:0;
+        }
+
+        .settlement-name{
+            font-weight:700;
+            color:#0f172a;
+        }
+
+        .settlement-sub{
+            font-size:13px;
+            color:#64748b;
+            margin-top:3px;
+        }
+
+        .settlement-amount{
+            font-weight:700;
+            color:#15803d;
+            white-space:nowrap;
+        }
+
+        .empty-state,
+        .empty-mini{
+            text-align:center;
+            padding:28px 18px;
+            color:var(--muted);
+            border:1px dashed #d7e1ee;
+            border-radius:18px;
+            background:#fbfdff;
+        }
+
+        @media (max-width: 1100px){
+            .stats-row{ grid-template-columns:repeat(2, 1fr); }
+        }
+
+        @media (max-width: 992px){
+            .content-grid{ grid-template-columns:1fr; }
+            .navbar-brand{ font-size:26px; }
+            .page-title{ font-size:28px; }
+            .settlement-total{ font-size:36px; }
+        }
+
+        @media (max-width: 768px){
+            .navbar-custom{
+                width:95%;
+                padding:16px 18px;
+            }
+
+            .page-wrap{ width:95%; }
+            .expense-top{ flex-direction:column; align-items:flex-start; }
+            .stats-row{ grid-template-columns:1fr; }
         }
     </style>
 </head>
 <body>
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>{{ group.name }}</h2>
-        <a href="{% url 'groups_list' %}" class="btn btn-secondary">Back to Groups</a>
+
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'dashboard' %}">Expense Tracker</a>
+
+        <div class="d-flex align-items-center gap-4 ms-auto flex-wrap">
+            <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">Dashboard</a>
+            <a href="{% url 'groups_list' %}" class="nav-link-custom active-link">Groups</a>
+            <a href="{% url 'friends_list' %}" class="nav-link-custom {% if '/friends/' in request.path %}active-link{% endif %}">Friends</a>
+            <a href="{% url 'split_expense' %}" class="nav-link-custom {% if '/split-expense/' in request.path %}active-link{% endif %}">Split Expense</a>
+            <a href="{% url 'settlements' %}" class="nav-link-custom {% if request.path == '/settlements/' %}active-link{% endif %}">Settlements</a>
+
+            <div class="user-badge">
+                <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+                <p class="user-name mb-0">{{ request.user.username }}</p>
+            </div>
+
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-icon-btn">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="page-wrap">
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">{{ group.name }}</h1>
+            <div class="page-subtitle">Track shared expenses, invite progress, and payment settlements from one place.</div>
+        </div>
+
+        <div class="head-actions">
+            {% if can_create_split %}
+            <a href="{% url 'split_expense' %}" class="head-btn-primary">
+                <i class="bi bi-plus-circle"></i>
+                Add Split Expense
+            </a>
+            {% endif %}
+            <a href="{% url 'groups_list' %}" class="head-btn-secondary">
+                <i class="bi bi-arrow-left"></i>
+                Back to Groups
+            </a>
+        </div>
     </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="summary-card bg1">
-                <h6>Total Group Expense</h6>
-                <h3>₹{{ total_group_amount }}</h3>
-            </div>
+    <div class="stats-row">
+        <div class="stat-card bg-primary-grad">
+            <h6>Total Group Expense</h6>
+            <h3>₹{{ total_group_amount }}</h3>
         </div>
-        <div class="col-md-4">
-            <div class="summary-card bg2">
-                <h6>Total Members</h6>
-                <h3>{{ member_count }}</h3>
-            </div>
+        <div class="stat-card bg-success-grad">
+            <h6>Total Members</h6>
+            <h3>{{ member_count }}</h3>
         </div>
-        <div class="col-md-4">
-            <div class="summary-card bg3">
-                <h6>Total Expense Entries</h6>
-                <h3>{{ expenses|length }}</h3>
-            </div>
+        <div class="stat-card bg-warning-grad">
+            <h6>Total Expense Entries</h6>
+            <h3>{{ expenses|length }}</h3>
+        </div>
+        <div class="stat-card bg-violet-grad">
+            <h6>Pending Balances</h6>
+            <h3>{{ settlements|length }}</h3>
         </div>
     </div>
 
-    <div class="card card-box p-4 mb-4">
-        <h4 class="mb-3">Members</h4>
-        {% for member in members %}
-            <span class="member-pill">{{ member.name }}</span>
-        {% empty %}
-            <p>No members found.</p>
-        {% endfor %}
+    <div class="card-box p-4 p-md-5 mb-4">
+        <div class="section-title">Members & Invite Status</div>
+        <div class="section-subtitle">View who has joined and who is still pending invitation acceptance.</div>
+
+        {% if member_status %}
+        <div class="member-wrap">
+            {% for gm in member_status %}
+                <div class="member-pill">
+                    <i class="bi bi-person-circle"></i>
+                    {{ gm.friend.name }}{% if gm.friend.email %} • {{ gm.friend.email }}{% endif %}
+
+                    {% if gm.role == "owner" %}
+                        <span class="badge-soft badge-joined">Owner</span>
+                    {% else %}
+                        <span class="badge-soft badge-custom">Member</span>
+                    {% endif %}
+
+                    {% if gm.invite_status == "joined" %}
+                        <span class="badge-soft badge-joined">Joined</span>
+                    {% else %}
+                        <span class="badge-soft badge-pending">Invite Pending</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-mini">No members found in this group.</div>
+        {% endif %}
     </div>
 
-    <div class="row g-4">
-        <div class="col-lg-7">
-            <div class="card card-box p-4">
-                <h4 class="mb-3">Expense History</h4>
+    <div class="content-grid">
+        <div class="card-box p-4 p-md-5">
+            <div class="section-title">Expense History</div>
+            <div class="section-subtitle">View all split entries, payment status, and mark individual shares as settled.</div>
 
+            {% if expenses %}
+            <div class="expense-list">
                 {% for item in expenses %}
-                <div class="border rounded p-3 mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
+                <div class="expense-card">
+                    <div class="expense-top">
                         <div>
-                            <h5 class="mb-1">{{ item.title }}</h5>
-                            <small class="text-muted">
-                                Paid by {{ item.paid_by }} |
-                                Total ₹{{ item.total_amount }} |
-                                Per person ₹{{ item.per_person }}
-                            </small>
+                            <div class="expense-title">{{ item.title }}</div>
+                            <div class="expense-meta">
+                                Paid by <strong>{% if item.expense.created_by == request.user %}You{% else %}{{ item.paid_by }}{% endif %}</strong> |
+                                Total <strong>₹{{ item.total_amount }}</strong>
+                                {% if item.per_person != "-" %}| Per Person <strong>₹{{ item.per_person }}</strong>{% endif %}
+                            </div>
+
+                            {% if item.participant_names %}
+                            <div class="expense-meta">
+                                Participants: {{ item.participant_names|join:", " }}
+                            </div>
+                            {% endif %}
+
+                            <div class="expense-mini-stats">
+                                <span class="mini-pill settled">Settled: ₹{{ item.settled_amount }}</span>
+                                <span class="mini-pill pending">Pending: ₹{{ item.pending_amount }}</span>
+                            </div>
                         </div>
-                        <span class="badge bg-primary">Split Evenly</span>
+
+                        <div class="action-group">
+                            {% if item.split_type == "equal" %}
+                                <span class="badge-soft badge-equal">Equal</span>
+                            {% elif item.split_type == "percentage" %}
+                                <span class="badge-soft badge-custom">Percentage</span>
+                            {% else %}
+                                <span class="badge-soft badge-custom">Custom</span>
+                            {% endif %}
+
+                            {% if item.can_edit %}
+                            <a href="{% url 'edit_split_expense' item.expense.id %}" class="mini-btn mini-edit">Edit</a>
+                            {% endif %}
+
+                            {% if item.can_delete %}
+                            <form method="POST" action="{% url 'delete_split_expense' item.expense.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="mini-btn mini-delete">Delete</button>
+                            </form>
+                            {% endif %}
+                        </div>
                     </div>
 
-                    <div class="mt-3">
-                        <strong>Members Split:</strong>
-                        <ul class="list-group mt-2">
-                            {% for share in item.shares %}
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>{{ share.friend.name }}</span>
-                                <span>₹{{ share.share_amount }}</span>
-                            </li>
-                            {% endfor %}
-                        </ul>
+                    <div class="split-table-wrap">
+                        <table class="split-table">
+                            <thead>
+                                <tr>
+                                    <th>Member</th>
+                                    <th class="text-end">Share Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in item.shares %}
+                                {% with share=row.share %}
+                                <tr>
+                                    <td>{{ share.friend.name }}</td>
+                                    <td class="text-end">₹{{ share.share_amount }}</td>
+                                    <td>
+                                        {% if share.is_settled %}
+                                            <span class="badge-soft badge-joined">Settled</span>
+                                        {% else %}
+                                            <span class="badge-soft badge-pending">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if not share.is_settled and row.can_mark %}
+                                        <form method="POST" action="{% url 'mark_share_settled' share.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="mini-btn mini-edit">Mark Settled</button>
+                                        </form>
+                                        {% else %}
+                                        <span class="text-muted small">Completed</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endwith %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                {% empty %}
-                <p>No split expenses added yet.</p>
                 {% endfor %}
             </div>
+            {% else %}
+            <div class="empty-state">No split expenses added yet.</div>
+            {% endif %}
         </div>
 
-        <div class="col-lg-5">
-            <div class="split-card">
-                <div class="text-center mb-4">
-                    <div style="font-size:14px; opacity:.7;">Group Total</div>
-                    <div style="font-size:42px; font-weight:700;">₹{{ total_group_amount }}</div>
-                </div>
+        <div class="settlement-panel">
+            <div class="settlement-top">
+                <small>Group Total</small>
+                <h2 class="settlement-total">₹{{ total_group_amount }}</h2>
+            </div>
 
-                <div class="mb-3" style="font-size:18px; font-weight:600;">Who Owes Whom</div>
+            <div class="settlement-body">
+                <div class="settlement-title">Who Owes Whom</div>
 
-                {% for item in settlements %}
-                <div class="split-item">
-                    <div class="d-flex align-items-center">
-                        <div class="avatar-circle">{{ item.debtor|first|upper }}</div>
-                        <div>
-                            <div style="font-weight:600;">{{ item.debtor }}</div>
-                            <div style="font-size:13px; opacity:.7;">owes {{ item.creditor }}</div>
+                {% if settlements %}
+                    {% for item in settlements %}
+                    <div class="settlement-item">
+                        <div class="settlement-left">
+                            <div class="avatar-circle">{{ item.debtor|first|upper }}</div>
+                            <div>
+                                <div class="settlement-name">{{ item.debtor }}</div>
+                                <div class="settlement-sub">owes {{ item.creditor }}</div>
+                            </div>
                         </div>
+                        <div class="settlement-amount">₹{{ item.amount }}</div>
                     </div>
-                    <div style="font-weight:700;">₹{{ item.amount }}</div>
-                </div>
-                {% empty %}
-                <div class="text-center" style="opacity:.7;">No pending balances</div>
-                {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-mini">No pending balances in this group.</div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
