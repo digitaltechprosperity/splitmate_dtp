@@ -1212,7 +1212,9 @@ def verify_otp(request):
 
         if otp_storage.get(phone) == entered_otp:
             user, created = User.objects.get_or_create(username=phone)
+            user.backend = "django.contrib.auth.backends.ModelBackend"
             login(request, user)
+            del otp_storage[phone]
             return redirect("dashboard")
 
         return render(request, "verify.html", {
