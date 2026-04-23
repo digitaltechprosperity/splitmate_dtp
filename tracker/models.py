@@ -299,7 +299,7 @@ class SplitExpense(models.Model):
 
     def get_selected_participants(self):
         return Friend.objects.filter(
-            splitparticipant__expense=self,
+            split_participant_rows__expense=self,
             groupmember__group=self.group
         ).distinct()
 
