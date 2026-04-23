@@ -56,6 +56,10 @@ class FriendForm(forms.ModelForm):
             }),
         }
 
+    def __init__(self, *args, **kwargs):
+        self.current_user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
     def clean_name(self):
         name = self.cleaned_data.get("name")
         if not name:
@@ -66,7 +70,14 @@ class FriendForm(forms.ModelForm):
         email = self.cleaned_data.get("email")
         if not email:
             raise forms.ValidationError("Please enter email address.")
-        return email.strip().lower()
+        email = email.strip().lower()
+        if self.current_user:
+            qs = Friend.objects.filter(user=self.current_user, email=email)
+            if self.instance and self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise forms.ValidationError("You already have a friend with this email address.")
+        return email
 
 
 class GroupForm(forms.ModelForm):

@@ -1,3 +1,9 @@
+databases:
+  - name: expense-tracker-db
+    databaseName: expensetracker
+    user: expensetracker
+    plan: free
+
 services:
   - type: web
     name: expense-tracker
@@ -11,3 +17,7 @@ services:
         value: "False"
       - key: PYTHON_VERSION
         value: "3.11.11"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: expense-tracker-db
+          property: connectionString

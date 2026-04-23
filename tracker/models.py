@@ -107,7 +107,7 @@ class Group(models.Model):
         return self.is_owner(app_user)
 
     def can_create_split(self, app_user):
-        return self.is_owner(app_user)
+        return self.is_member(app_user)
 
     def can_mark_any_payment_settled(self, app_user):
         return self.is_owner(app_user)
@@ -299,7 +299,7 @@ class SplitExpense(models.Model):
 
     def get_selected_participants(self):
         return Friend.objects.filter(
-            splitparticipant__expense=self,
+            split_participant_rows__expense=self,
             groupmember__group=self.group
         ).distinct()
 
