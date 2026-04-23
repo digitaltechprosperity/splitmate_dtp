@@ -551,13 +551,13 @@ class FriendListCreateView(LoginRequiredMixin, TemplateView):
 
         context.update({
             "friends": friends.order_by("name"),
-            "form": kwargs.get("form", FriendForm()),
+            "form": kwargs.get("form", FriendForm(user=request.user)),
             "query": query,
         })
         return context
 
     def post(self, request, *args, **kwargs):
-        form = FriendForm(request.POST)
+        form = FriendForm(request.POST, user=request.user)
         if form.is_valid():
             friend = form.save(commit=False)
             friend.user = request.user
@@ -591,14 +591,14 @@ class FriendUpdateView(LoginRequiredMixin, TemplateView):
 
         context.update({
             "friends": friends.order_by("name"),
-            "form": kwargs.get("form", FriendForm(instance=self.friend)),
+            "form": kwargs.get("form", FriendForm(instance=self.friend, user=request.user)),
             "query": query,
             "editing_friend": self.friend,
         })
         return context
 
     def post(self, request, *args, **kwargs):
-        form = FriendForm(request.POST, instance=self.friend)
+        form = FriendForm(request.POST, instance=self.friend, user=request.user)
         if form.is_valid():
             friend = form.save(commit=False)
             friend.user = request.user
