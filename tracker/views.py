@@ -15,6 +15,8 @@ from django.db.models import Q, Sum
 from django.db.models.functions import TruncMonth
 from django.http import HttpResponseForbidden, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+import random
+from twilio.rest import Client
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views import View
@@ -31,6 +33,7 @@ from .models import (
     SplitParticipant,
     SplitShare,
 )
+
 
 
 def get_accessible_groups(user):
@@ -70,6 +73,7 @@ def _store_pending_invite_token(request):
 
 def _forbidden():
     return HttpResponseForbidden("You do not have permission to perform this action.")
+otp_storage = {}
 
 
 def _round_money(value):
@@ -1174,3 +1178,45 @@ class SettlementsView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["settlements"] = _get_user_settlements(self.request.user)
         return context
+    
+def send_otp(request):
+    if request.method == "POST":
+        phone = request.POST.get("phone")
+
+        otp = str(random.randint(100000, 999999))
+        otp_storage[phone] = otp
+
+        try:
+            client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+
+            message = client.messages.create(
+                body=f"Your OTP is {otp}",
+                from_=settings.TWILIO_PHONE_NUMBER,
+                to=phone
+            )
+
+            print("✅ OTP SENT:", message.sid)
+
+        except Exception as e:
+            print("🔥 ERROR SENDING OTP:", e)
+            return render(request, "send_otp.html", {"error": str(e)})
+
+        return render(request, "verify.html", {"phone": phone})
+
+    return render(request, "send_otp.html")
+  
+def verify_otp(request):
+    if request.method == "POST":
+        phone = request.POST.get("phone")
+        entered_otp = request.POST.get("otp")
+
+        if otp_storage.get(phone) == entered_otp:
+            user, created = User.objects.get_or_create(username=phone)
+            login(request, user)
+            return redirect("dashboard")
+
+        return render(request, "verify.html", {
+            "phone": phone,
+            "error": "Invalid OTP"
+        })
+

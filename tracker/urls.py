@@ -19,6 +19,8 @@ from .views import (
     SplitExpenseDeleteView,
     MarkShareSettledView,
     SettlementsView,
+    send_otp,
+    verify_otp,
 )
 
 urlpatterns = [
@@ -48,4 +50,7 @@ urlpatterns = [
     path("shares/<int:share_id>/settle/", MarkShareSettledView.as_view(), name="mark_share_settled"),
 
     path("settlements/", SettlementsView.as_view(), name="settlements"),
+    path('send-otp/', send_otp, name='send_otp'),
+    path('verify-otp/', verify_otp, name='verify_otp'),
+
 ]
