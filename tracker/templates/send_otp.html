@@ -1,0 +1,7 @@
+<h2>Login with OTP</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="text" name="phone" placeholder="Enter phone number" required>
+    <button type="submit">Send OTP</button>
+</form>
