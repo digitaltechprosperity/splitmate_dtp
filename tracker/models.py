@@ -107,10 +107,10 @@ class Group(models.Model):
         return self.is_owner(app_user)
 
     def can_create_split(self, app_user):
-        return self.is_owner(app_user)
+        return self.is_member(app_user)
 
     def can_mark_any_payment_settled(self, app_user):
-        return self.is_owner(app_user)
+        return self.is_member(app_user)
 
     def all_group_friends(self):
         return Friend.objects.filter(
