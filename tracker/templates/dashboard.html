@@ -45,24 +45,28 @@
         }
 
         body{
-            background:linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+            background: linear-gradient(180deg, #f1f5ff 0%, #e6edff 100%);
             font-family:'Poppins',sans-serif;
             color:var(--text);
             min-height:100vh;
         }
 
         .navbar-custom{
-            position:sticky;
-            top:20px;
-            z-index:1000;
-            background:rgba(255,255,255,0.96);
-            backdrop-filter:blur(14px);
-            border:1px solid rgba(255,255,255,0.7);
-            border-radius:28px;
-            margin:20px auto;
-            width:92%;
-            padding:14px 28px;
-            box-shadow:0 12px 35px rgba(15,23,42,.08);
+            position: sticky;
+            top: 20px;
+            z-index: 1000;
+
+            background: rgba(255,255,255,0.85);   
+            backdrop-filter: blur(18px);          
+    
+            border: 1px solid rgba(255,255,255,0.6);   
+    
+            border-radius: 28px;
+            margin: 20px auto;
+            width: 92%;
+            padding: 14px 28px;
+
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
         }
 
         .navbar-brand{
@@ -596,13 +600,51 @@
                 min-width:auto;
             }
         }
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -0.3px;
+        }
+
+        .logo-text span {
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-icon {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            font-size: 22px;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'dashboard' %}">Expense Tracker</a>
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'dashboard' %}">
+            <div class="logo-icon">S</div>
+            <span class="logo-text">
+                Split<span>Mate</span>
+            </span>
+        </a>
 
         <div class="d-flex align-items-center gap-4 ms-auto flex-wrap">
             <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">Dashboard</a>
@@ -637,19 +679,23 @@
     </div>
 
     <div class="stats-row">
-        <div class="stat-card bg-primary-grad">
+        <div class="stat-card bg-primary-grad position-relative">
+            <i class="bi bi-wallet stat-icon"></i>
             <h6>Total Personal Expenses</h6>
-            <h3>₹{{ total_personal }}</h3>
+            <h3>₹{{ total_personal|floatformat:2 }}</h3>
         </div>
         <div class="stat-card bg-success-grad">
+            <i class="bi bi-people stat-icon"></i>
             <h6>Total Friends</h6>
             <h3>{{ total_friends }}</h3>
         </div>
         <div class="stat-card bg-warning-grad">
+            <i class="bi bi-diagram-3 stat-icon"></i>
             <h6>Active Groups</h6>
             <h3>{{ total_groups }}</h3>
         </div>
         <div class="stat-card bg-violet-grad">
+            <i class="bi bi-cash-coin stat-icon"></i>
             <h6>Split Expenses</h6>
             <h3>{{ total_split_expenses }}</h3>
         </div>
