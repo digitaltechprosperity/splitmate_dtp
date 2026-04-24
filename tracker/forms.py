@@ -14,6 +14,14 @@ from django.contrib.auth.models import User
 
 
 class RegisterForm(forms.ModelForm):
+    display_name = forms.CharField(
+        label="Username",
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": "Enter username"
+        })
+    )
+
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={
             "class": "form-control",
@@ -23,15 +31,7 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["username", "email"]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields["username"].widget.attrs.update({
-            "class": "form-control",
-            "placeholder": "Enter username"
-        })
+        fields = ["display_name", "email"]
 
     def clean_email(self):
         email = self.cleaned_data["email"].strip().lower()

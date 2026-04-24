@@ -493,15 +493,15 @@ class RegisterView(FormView):
     success_url = reverse_lazy("login")
 
     def form_valid(self, form):
-        user = form.save(commit=False)
+        display_name = form.cleaned_data["display_name"]
+        email = form.cleaned_data["email"].strip().lower()
 
-        username = form.cleaned_data["username"]
-        email = form.cleaned_data["email"]
+        user = User(
+            username=email,          # unique internal username
+            email=email,
+            first_name=display_name  # duplicate display name allowed
+        )
 
-        user.username = username
-        user.email = email
-
-        # User cannot login until password is created from email link
         user.set_unusable_password()
         user.is_active = False
         user.save()
@@ -516,11 +516,11 @@ class RegisterView(FormView):
         send_mail(
             subject="Create your Expense Tracker password",
             message=f"""
-Hello {username},
+Hello {display_name},
 
 Your account has been created successfully.
 
-Username: {username}
+Username: {display_name}
 Gmail: {email}
 
 Create your password using this link:
