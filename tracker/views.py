@@ -548,7 +548,10 @@ from .models import PasswordSetupToken
 
 def set_password(request, token):
     try:
-        reset = PasswordSetupToken.objects.get(token=token, is_used=False)
+        reset = PasswordSetupToken.objects.select_related("user").get(
+            token=token,
+            is_used=False
+        )
     except PasswordSetupToken.DoesNotExist:
         return HttpResponse("Invalid or expired password setup link.")
 
@@ -559,6 +562,11 @@ def set_password(request, token):
         password = request.POST.get("password")
         confirm_password = request.POST.get("confirm_password")
 
+        if not password or not confirm_password:
+            return render(request, "set_password.html", {
+                "error": "Please enter password and confirm password."
+            })
+
         if password != confirm_password:
             return render(request, "set_password.html", {
                 "error": "Passwords do not match."
@@ -566,12 +574,22 @@ def set_password(request, token):
 
         user = reset.user
         user.set_password(password)
-        user.save()
+        user.is_active = True
+        user.save(update_fields=["password", "is_active"])
 
         reset.is_used = True
-        reset.save()
+        reset.save(update_fields=["is_used"])
 
-        messages.success(request, "Password created successfully. Please login.", extra_tags="auth")
+        PasswordSetupToken.objects.filter(
+            user=user,
+            is_used=False
+        ).exclude(id=reset.id).update(is_used=True)
+
+        messages.success(
+            request,
+            "Password created successfully. Please login.",
+            extra_tags="auth"
+        )
         return redirect("login")
 
     return render(request, "set_password.html")
