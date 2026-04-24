@@ -499,13 +499,13 @@ class RegisterView(FormView):
         user = User(
             username=email,          # unique internal username
             email=email,
-            first_name=display_name  # duplicate display name allowed
+            first_name=display_name  # store display name here
         )
 
         user.set_unusable_password()
         user.is_active = False
-        user.save()
-
+        user.save()          # unique internal username
+        
         PasswordSetupToken.objects.filter(user=user, is_used=False).update(is_used=True)
         token = PasswordSetupToken.objects.create(user=user)
 
