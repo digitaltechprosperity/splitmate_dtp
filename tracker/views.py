@@ -501,10 +501,12 @@ class RegisterView(FormView):
         user.username = username
         user.email = email
 
-        temporary_password = generate_random_password()
-        user.set_password(temporary_password)
+        # User cannot login until password is created from email link
+        user.set_unusable_password()
+        user.is_active = False
         user.save()
 
+        PasswordSetupToken.objects.filter(user=user, is_used=False).update(is_used=True)
         token = PasswordSetupToken.objects.create(user=user)
 
         password_link = self.request.build_absolute_uri(
@@ -512,7 +514,7 @@ class RegisterView(FormView):
         )
 
         send_mail(
-            subject="Your Expense Tracker Login Details",
+            subject="Create your Expense Tracker password",
             message=f"""
 Hello {username},
 
@@ -520,11 +522,8 @@ Your account has been created successfully.
 
 Username: {username}
 Gmail: {email}
-Temporary Password: {temporary_password}
 
-Login using your username and temporary password.
-
-Create your own password here:
+Create your password using this link:
 {password_link}
 
 This link expires in 24 hours.
@@ -535,6 +534,12 @@ Expense Tracker
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],
             fail_silently=False,
+        )
+
+        messages.success(
+            self.request,
+            "Account created successfully. Please check your Gmail to create your password.",
+            extra_tags="auth"
         )
 
         return redirect("login")
@@ -1380,6 +1385,7 @@ def forgot_password(request):
             user = User.objects.filter(username__iexact=identifier).first()
 
         if user:
+            PasswordSetupToken.objects.filter(user=user, is_used=False).update(is_used=True)
             token = PasswordSetupToken.objects.create(user=user)
 
             reset_link = request.build_absolute_uri(
