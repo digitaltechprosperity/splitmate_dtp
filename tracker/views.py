@@ -493,18 +493,20 @@ class RegisterView(FormView):
     success_url = reverse_lazy("login")
 
     def form_valid(self, form):
-        user = form.save(commit=False)
+        display_name = form.cleaned_data["display_name"]
+        email = form.cleaned_data["email"].strip().lower()
 
-        username = form.cleaned_data["username"]
-        email = form.cleaned_data["email"]
+        user = User(
+            username=email,          # unique internal username
+            email=email,
+            first_name=display_name  # store display name here
+        )
 
-        user.username = username
-        user.email = email
-
-        temporary_password = generate_random_password()
-        user.set_password(temporary_password)
-        user.save()
-
+        user.set_unusable_password()
+        user.is_active = False
+        user.save()          # unique internal username
+        
+        PasswordSetupToken.objects.filter(user=user, is_used=False).update(is_used=True)
         token = PasswordSetupToken.objects.create(user=user)
 
         password_link = self.request.build_absolute_uri(
@@ -512,19 +514,16 @@ class RegisterView(FormView):
         )
 
         send_mail(
-            subject="Your Expense Tracker Login Details",
+            subject="Create your Expense Tracker password",
             message=f"""
-Hello {username},
+Hello {display_name},
 
 Your account has been created successfully.
 
-Username: {username}
+Username: {display_name}
 Gmail: {email}
-Temporary Password: {temporary_password}
 
-Login using your username and temporary password.
-
-Create your own password here:
+Create your password using this link:
 {password_link}
 
 This link expires in 24 hours.
@@ -535,6 +534,12 @@ Expense Tracker
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],
             fail_silently=False,
+        )
+
+        messages.success(
+            self.request,
+            "Account created successfully. Please check your Gmail to create your password.",
+            extra_tags="auth"
         )
 
         return redirect("login")
@@ -548,7 +553,10 @@ from .models import PasswordSetupToken
 
 def set_password(request, token):
     try:
-        reset = PasswordSetupToken.objects.get(token=token, is_used=False)
+        reset = PasswordSetupToken.objects.select_related("user").get(
+            token=token,
+            is_used=False
+        )
     except PasswordSetupToken.DoesNotExist:
         return HttpResponse("Invalid or expired password setup link.")
 
@@ -559,6 +567,11 @@ def set_password(request, token):
         password = request.POST.get("password")
         confirm_password = request.POST.get("confirm_password")
 
+        if not password or not confirm_password:
+            return render(request, "set_password.html", {
+                "error": "Please enter password and confirm password."
+            })
+
         if password != confirm_password:
             return render(request, "set_password.html", {
                 "error": "Passwords do not match."
@@ -566,12 +579,22 @@ def set_password(request, token):
 
         user = reset.user
         user.set_password(password)
-        user.save()
+        user.is_active = True
+        user.save(update_fields=["password", "is_active"])
 
         reset.is_used = True
-        reset.save()
+        reset.save(update_fields=["is_used"])
 
-        messages.success(request, "Password created successfully. Please login.")
+        PasswordSetupToken.objects.filter(
+            user=user,
+            is_used=False
+        ).exclude(id=reset.id).update(is_used=True)
+
+        messages.success(
+            request,
+            "Password created successfully. Please login.",
+            extra_tags="auth"
+        )
         return redirect("login")
 
     return render(request, "set_password.html")
@@ -1362,6 +1385,7 @@ def forgot_password(request):
             user = User.objects.filter(username__iexact=identifier).first()
 
         if user:
+            PasswordSetupToken.objects.filter(user=user, is_used=False).update(is_used=True)
             token = PasswordSetupToken.objects.create(user=user)
 
             reset_link = request.build_absolute_uri(
@@ -1393,7 +1417,9 @@ Expense Tracker
 
         messages.success(
             request,
-            "If an account exists with this username or Gmail, a password reset link has been sent."
+            "If an account exists with this username or Gmail, a password reset link has been sent.",
+            extra_tags="auth"
+
         )
         return redirect("login")
 

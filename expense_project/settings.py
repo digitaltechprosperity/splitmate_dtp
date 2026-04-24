@@ -2,6 +2,9 @@ from pathlib import Path
 import os
 import dj_database_url
 
+import os
+import dj_database_url
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-key")
@@ -53,13 +56,17 @@ TEMPLATES = [
 WSGI_APPLICATION = "expense_project.wsgi.application"
 
 
+
+
+
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
     DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
             conn_max_age=600,
+            ssl_require=True,
         )
     }
 else:
@@ -70,6 +77,7 @@ else:
         }
     }
 
+print("DATABASE ENGINE:", DATABASES["default"]["ENGINE"])
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -141,3 +149,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 TWILIO_ACCOUNT_SID = "ACcf5ace66af026d8a9f20aae37c955814"
 TWILIO_AUTH_TOKEN = "beddaca467fe064e9aa4f82a8bb8f44a"
 TWILIO_PHONE_NUMBER = "+12184268634"
+
+print("DATABASE ENGINE:", DATABASES["default"]["ENGINE"])
+print("DATABASE NAME:", DATABASES["default"].get("NAME"))

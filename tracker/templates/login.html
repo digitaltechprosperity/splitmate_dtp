@@ -184,13 +184,16 @@
             </div>
         {% endif %}
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
+
+            {% if messages %}
+        {% for message in messages %}
+            {% if "auth" in message.tags %}
+                <div class="alert alert-{{ message.tags|cut:'auth'|default:'info' }}">
                     {{ message }}
                 </div>
-            {% endfor %}
-        {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
         <form method="POST">
             {% csrf_token %}
