@@ -21,7 +21,13 @@ from .views import (
     SettlementsView,
     send_otp,
     verify_otp,
+    set_password,
+    forgot_password,
+    
+    
 )
+
+
 
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
@@ -52,5 +58,8 @@ urlpatterns = [
     path("settlements/", SettlementsView.as_view(), name="settlements"),
     path('send-otp/', send_otp, name='send_otp'),
     path('verify-otp/', verify_otp, name='verify_otp'),
+
+    path("forgot-password/", forgot_password, name="forgot_password"),
+    path("set-password/<uuid:token>/", set_password, name="set_password"),
 
 ]

@@ -447,34 +447,142 @@ def _get_user_settlements(user):
 class HomeView(TemplateView):
     template_name = "home.html"
 
+from django.core.mail import send_mail
+from django.conf import settings
+from django.urls import reverse
+from .models import PasswordSetupToken
+
+
+import secrets
+import string
+
+from django.core.mail import send_mail
+from django.conf import settings
+from django.urls import reverse
+from django.shortcuts import redirect
+
+from .models import PasswordSetupToken
+
+
+def generate_random_password(length=10):
+    chars = string.ascii_letters + string.digits + "@#$%&"
+    return "".join(secrets.choice(chars) for _ in range(length))
+
+
+import secrets
+import string
+
+from django.conf import settings
+from django.core.mail import send_mail
+from django.shortcuts import redirect
+from django.urls import reverse, reverse_lazy
+from django.views.generic import FormView
+
+from .forms import RegisterForm
+from .models import PasswordSetupToken
+
+
+def generate_random_password(length=10):
+    chars = string.ascii_letters + string.digits + "@#$%&"
+    return "".join(secrets.choice(chars) for _ in range(length))
+
 
 class RegisterView(FormView):
     template_name = "register.html"
     form_class = RegisterForm
-    success_url = reverse_lazy("dashboard")
-
-    def dispatch(self, request, *args, **kwargs):
-        _store_pending_invite_token(request)
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["invite_token"] = self.request.session.get("pending_invite_token", "")
-        return context
+    success_url = reverse_lazy("login")
 
     def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
+        user = form.save(commit=False)
 
-        token = self.request.session.pop("pending_invite_token", None)
-        if token:
-            return redirect("accept_invite", token=token)
+        username = form.cleaned_data["username"]
+        email = form.cleaned_data["email"]
 
-        return redirect("dashboard")
+        user.username = username
+        user.email = email
+
+        temporary_password = generate_random_password()
+        user.set_password(temporary_password)
+        user.save()
+
+        token = PasswordSetupToken.objects.create(user=user)
+
+        password_link = self.request.build_absolute_uri(
+            reverse("set_password", kwargs={"token": token.token})
+        )
+
+        send_mail(
+            subject="Your Expense Tracker Login Details",
+            message=f"""
+Hello {username},
+
+Your account has been created successfully.
+
+Username: {username}
+Gmail: {email}
+Temporary Password: {temporary_password}
+
+Login using your username and temporary password.
+
+Create your own password here:
+{password_link}
+
+This link expires in 24 hours.
+
+Thanks,
+Expense Tracker
+""",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False,
+        )
+
+        return redirect("login")
+
+
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import PasswordSetupToken
+
+
+def set_password(request, token):
+    try:
+        reset = PasswordSetupToken.objects.get(token=token, is_used=False)
+    except PasswordSetupToken.DoesNotExist:
+        return HttpResponse("Invalid or expired password setup link.")
+
+    if reset.is_expired():
+        return HttpResponse("This password setup link has expired.")
+
+    if request.method == "POST":
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if password != confirm_password:
+            return render(request, "set_password.html", {
+                "error": "Passwords do not match."
+            })
+
+        user = reset.user
+        user.set_password(password)
+        user.save()
+
+        reset.is_used = True
+        reset.save()
+
+        messages.success(request, "Password created successfully. Please login.")
+        return redirect("login")
+
+    return render(request, "set_password.html")
+
+
+from .forms import EmailOrUsernameLoginForm
 
 
 class CustomLoginView(DjangoLoginView):
     template_name = "login.html"
+    authentication_form = EmailOrUsernameLoginForm
 
     def dispatch(self, request, *args, **kwargs):
         _store_pending_invite_token(request)
@@ -1232,3 +1340,61 @@ def verify_otp(request):
             "error": "Invalid OTP"
         })
 
+
+
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
+
+from .models import PasswordSetupToken
+
+
+def forgot_password(request):
+    if request.method == "POST":
+        identifier = request.POST.get("identifier", "").strip().lower()
+
+        user = User.objects.filter(email__iexact=identifier).first()
+
+        if not user:
+            user = User.objects.filter(username__iexact=identifier).first()
+
+        if user:
+            token = PasswordSetupToken.objects.create(user=user)
+
+            reset_link = request.build_absolute_uri(
+                reverse("set_password", kwargs={"token": token.token})
+            )
+
+            send_mail(
+                subject="Reset your Expense Tracker password",
+                message=f"""
+Hello {user.username},
+
+We received a request to reset your password.
+
+Click the link below to create a new password:
+
+{reset_link}
+
+This link expires in 24 hours.
+
+If you did not request this, ignore this email.
+
+Thanks,
+Expense Tracker
+""",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
+        messages.success(
+            request,
+            "If an account exists with this username or Gmail, a password reset link has been sent."
+        )
+        return redirect("login")
+
+    return render(request, "forgot_password.html")

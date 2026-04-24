@@ -5,18 +5,25 @@ from django.db import models
 
 from .models import Expense, Friend, Group, SplitExpense
 
+from django import forms
+from django.contrib.auth.models import User
 
-class RegisterForm(UserCreationForm):
+
+from django import forms
+from django.contrib.auth.models import User
+
+
+class RegisterForm(forms.ModelForm):
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={
             "class": "form-control",
-            "placeholder": "Enter email address"
+            "placeholder": "Enter Gmail address"
         })
     )
 
     class Meta:
         model = User
-        fields = ["username", "email", "password1", "password2"]
+        fields = ["username", "email"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -25,22 +32,18 @@ class RegisterForm(UserCreationForm):
             "class": "form-control",
             "placeholder": "Enter username"
         })
-        self.fields["password1"].widget.attrs.update({
-            "class": "form-control",
-            "placeholder": "Enter password"
-        })
-        self.fields["password2"].widget.attrs.update({
-            "class": "form-control",
-            "placeholder": "Confirm password"
-        })
 
     def clean_email(self):
         email = self.cleaned_data["email"].strip().lower()
+
+        if not email.endswith("@gmail.com"):
+            raise forms.ValidationError("Please enter a valid Gmail address.")
+
         if User.objects.filter(email__iexact=email).exists():
-            raise forms.ValidationError("An account with this email already exists.")
+            raise forms.ValidationError("An account with this Gmail already exists.")
+
         return email
-
-
+    
 class FriendForm(forms.ModelForm):
     class Meta:
         model = Friend
@@ -224,3 +227,51 @@ class SplitExpenseForm(forms.ModelForm):
             raise forms.ValidationError("Percentage split data is required.")
 
         return cleaned_data
+
+
+from django import forms
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+
+
+class EmailOrUsernameLoginForm(AuthenticationForm):
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": "Enter username or Gmail",
+            "autofocus": True,
+        })
+    )
+
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "Enter password",
+        })
+    )
+
+    def clean(self):
+        username_or_email = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
+
+        if username_or_email and password:
+            username_or_email = username_or_email.strip()
+
+            user_obj = User.objects.filter(email__iexact=username_or_email).first()
+
+            if user_obj:
+                username = user_obj.username
+            else:
+                username = username_or_email
+
+            self.user_cache = authenticate(
+                self.request,
+                username=username,
+                password=password
+            )
+
+            if self.user_cache is None:
+                raise forms.ValidationError("Invalid username/Gmail or password.")
+
+        return self.cleaned_data
