@@ -10,673 +10,382 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        :root{
-            --bg:#f4f7fb;
-            --card:#ffffff;
-            --text:#162033;
-            --muted:#6b7280;
-            --line:#e8edf5;
-            --primary:#2563eb;
-            --primary-soft:#eaf1ff;
-            --danger:#ef4444;
-            --danger-soft:#fff1f2;
-            --success:#16a34a;
-            --success-soft:#ebfff1;
-            --warning:#f59e0b;
-            --warning-soft:#fff7e8;
-            --shadow:0 10px 30px rgba(15, 23, 42, 0.08);
+        body {
+            background: linear-gradient(180deg, #f8fbff 0%, #f4f7fb 100%);
+            font-family: 'Poppins', sans-serif;
+            color: #162033;
+            min-height: 100vh;
         }
 
-        *{ box-sizing:border-box; }
-
-        body{
-            background:linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
-            font-family:'Poppins', sans-serif;
-            color:var(--text);
-            min-height:100vh;
+        .navbar-custom {
+            position: sticky;
+            top: 20px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(14px);
+            border-radius: 28px;
+            margin: 20px auto;
+            width: 92%;
+            padding: 14px 28px;
+            box-shadow: 0 12px 35px rgba(15,23,42,.08);
         }
 
-        .navbar-custom{
-            position:sticky;
-            top:20px;
-            z-index:1000;
-            background:rgba(255,255,255,0.95);
-            backdrop-filter:blur(14px);
-            border:1px solid rgba(255,255,255,0.7);
-            border-radius:28px;
-            margin:20px auto;
-            width:92%;
-            padding:14px 28px;
-            box-shadow:0 12px 35px rgba(15,23,42,.08);
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 32px;
+            color: #0f172a;
         }
 
-        .navbar-brand{
-            font-weight:700;
-            font-size:32px;
-            letter-spacing:-0.6px;
-            color:#0f172a;
+        .nav-link-custom {
+            color: #263247;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 8px 4px;
         }
 
-        .nav-link-custom{
-            position:relative;
-            color:#263247;
-            font-weight:500;
-            text-decoration:none;
-            padding:8px 4px;
-            transition:.25s ease;
+        .active-link {
+            color: #2563eb !important;
+            font-weight: 600;
+            border-bottom: 3px solid #2563eb;
         }
 
-        .nav-link-custom:hover{ color:var(--primary); }
-
-        .nav-link-custom::after{
-            content:"";
-            position:absolute;
-            left:0;
-            bottom:-8px;
-            width:0;
-            height:3px;
-            background:var(--primary);
-            border-radius:99px;
-            transition:width .25s ease;
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8fbff;
+            border: 1px solid #e8edf5;
+            padding: 8px 14px 8px 8px;
+            border-radius: 999px;
         }
 
-        .nav-link-custom:hover::after,
-        .active-link::after{ width:100%; }
-
-        .active-link{
-            color:var(--primary) !important;
-            font-weight:600;
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,#2563eb,#7c3aed);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
         }
 
-        .user-badge{
-            display:flex;
-            align-items:center;
-            gap:12px;
-            background:#f8fbff;
-            border:1px solid var(--line);
-            padding:8px 14px 8px 8px;
-            border-radius:999px;
-            box-shadow:0 6px 16px rgba(15,23,42,.04);
+        .logout-icon-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: none;
+            background: #fff1f2;
+            color: #ef4444;
+            font-size: 19px;
         }
 
-        .user-avatar{
-            width:38px;
-            height:38px;
-            border-radius:50%;
-            background:linear-gradient(135deg,#2563eb,#7c3aed);
-            color:#fff;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-weight:700;
-            font-size:15px;
+        .page-wrap {
+            width: min(1140px, 92%);
+            margin: 28px auto 50px;
         }
 
-        .user-name{
-            font-size:14px;
-            font-weight:600;
-            color:#111827;
-            margin:0;
+        .page-title {
+            font-size: 34px;
+            font-weight: 700;
+            color: #0f172a;
         }
 
-        .logout-icon-btn{
-            width:46px;
-            height:46px;
-            border-radius:50%;
-            border:none;
-            background:var(--danger-soft);
-            color:var(--danger);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:19px;
-            transition:.25s ease;
+        .page-subtitle {
+            color: #6b7280;
+            font-size: 14px;
         }
 
-        .logout-icon-btn:hover{
-            background:var(--danger);
-            color:#fff;
-            transform:translateY(-1px);
+        .top-chip {
+            background: white;
+            border: 1px solid #e8edf5;
+            border-radius: 999px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 600;
         }
 
-        .page-wrap{
-            width:min(1140px, 92%);
-            margin:28px auto 50px;
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 22px;
         }
 
-        .page-head{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            gap:20px;
-            flex-wrap:wrap;
-            margin-bottom:24px;
+        .stat-card {
+            border-radius: 24px;
+            color: white;
+            padding: 22px 24px;
+            min-height: 132px;
+            box-shadow: 0 10px 30px rgba(15,23,42,.08);
         }
 
-        .page-title{
-            font-size:34px;
-            font-weight:700;
-            letter-spacing:-0.8px;
-            margin:0;
-            color:#0f172a;
+        .bg-primary-grad { background: linear-gradient(135deg,#2563eb,#1d4ed8); }
+        .bg-success-grad { background: linear-gradient(135deg,#199150,#16803d); }
+        .bg-warning-grad { background: linear-gradient(135deg,#ff8a1c,#f97316); }
+
+        .stat-card h6 {
+            font-size: 15px;
+            font-weight: 500;
         }
 
-        .page-subtitle{
-            margin-top:6px;
-            color:var(--muted);
-            font-size:14px;
+        .stat-card h3 {
+            font-size: 34px;
+            font-weight: 700;
         }
 
-        .top-chip{
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            background:#ffffff;
-            border:1px solid var(--line);
-            border-radius:999px;
-            padding:10px 16px;
-            font-size:13px;
-            font-weight:600;
-            color:#334155;
-            box-shadow:0 6px 18px rgba(15,23,42,.05);
+        .card-box {
+            background: white;
+            border: 1px solid #e8edf5;
+            border-radius: 28px;
+            box-shadow: 0 10px 30px rgba(15,23,42,.08);
         }
 
-        .stats-row{
-            display:grid;
-            grid-template-columns:repeat(3, 1fr);
-            gap:18px;
-            margin-bottom:22px;
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
         }
 
-        .stat-card{
-            border:none;
-            border-radius:24px;
-            color:#fff;
-            padding:22px 24px;
-            min-height:132px;
-            box-shadow:var(--shadow);
-            position:relative;
-            overflow:hidden;
+        .section-subtitle,
+        .helper-text {
+            color: #6b7280;
+            font-size: 13px;
         }
 
-        .stat-card::after{
-            content:"";
-            position:absolute;
-            right:-30px;
-            top:-30px;
-            width:110px;
-            height:110px;
-            border-radius:50%;
-            background:rgba(255,255,255,.10);
-        }
-
-        .stat-card h6{
-            font-size:15px;
-            font-weight:500;
-            margin-bottom:12px;
-            opacity:.95;
-        }
-
-        .stat-card h3{
-            font-size:34px;
-            font-weight:700;
-            margin:0;
-            letter-spacing:-0.5px;
-        }
-
-        .bg-primary-grad{ background:linear-gradient(135deg,#2563eb,#1d4ed8); }
-        .bg-success-grad{ background:linear-gradient(135deg,#199150,#16803d); }
-        .bg-warning-grad{ background:linear-gradient(135deg,#ff8a1c,#f97316); }
-
-        .card-box{
-            background:var(--card);
-            border:1px solid rgba(232,237,245,.8);
-            border-radius:28px;
-            box-shadow:var(--shadow);
-        }
-
-        .section-title{
-            font-size:28px;
-            font-weight:700;
-            margin-bottom:6px;
-            letter-spacing:-0.5px;
-            color:#0f172a;
-        }
-
-        .section-subtitle{
-            color:var(--muted);
-            font-size:14px;
-            margin-bottom:24px;
-        }
-
-        .form-label.custom-label{
-            font-weight:600;
-            color:#1f2937;
-            margin-bottom:10px;
+        .form-label.custom-label {
+            font-weight: 600;
+            color: #1f2937;
         }
 
         .form-control,
-        select{
-            border-radius:16px !important;
-            padding:14px 16px !important;
-            border:1px solid #dbe4f0 !important;
-            background:#fff !important;
-            transition:.25s ease;
-            font-size:15px;
+        select {
+            border-radius: 16px !important;
+            padding: 14px 16px !important;
+            border: 1px solid #dbe4f0 !important;
+            background: white !important;
+            font-size: 15px;
         }
 
         .form-control:focus,
-        select:focus{
-            border-color:#2563eb !important;
-            box-shadow:0 0 0 4px rgba(37,99,235,.12) !important;
+        select:focus {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 4px rgba(37,99,235,.12) !important;
         }
 
-        .helper-text{
-            color:var(--muted);
-            font-size:13px;
-            margin-top:7px;
+        .form-alert {
+            display: flex;
+            gap: 12px;
+            border: 1px solid #ffd6dc;
+            background: #fff4f5;
+            color: #a61b45;
+            border-radius: 18px;
+            padding: 16px 18px;
+            margin-bottom: 20px;
         }
 
-        .primary-action-btn{
-            border:none;
-            border-radius:16px;
-            padding:13px 20px;
-            font-weight:600;
-            color:#fff;
-            background:linear-gradient(135deg,#2563eb,#3b82f6);
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            transition:.25s ease;
-            box-shadow:0 10px 22px rgba(37,99,235,.18);
+        .custom-split-box {
+            background: #f8fbff;
+            border: 1px dashed #cbd9ee;
+            border-radius: 20px;
+            padding: 18px;
+            margin-top: 10px;
         }
 
-        .primary-action-btn:hover{
-            transform:translateY(-1px);
-            box-shadow:0 14px 28px rgba(37,99,235,.24);
+        .custom-share-row {
+            border: 1px solid #e6edf7;
+            border-radius: 18px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            background: white;
         }
 
-        .secondary-action-btn{
-            border:none;
-            border-radius:16px;
-            padding:13px 20px;
-            font-weight:600;
-            color:#0f172a;
-            background:#eef3fb;
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            transition:.25s ease;
+        .custom-member-name {
+            font-weight: 600;
+            color: #111827;
         }
 
-        .secondary-action-btn:hover{ background:#dfe8f7; }
-
-        .form-alert{
-            display:flex;
-            align-items:flex-start;
-            gap:12px;
-            border:1px solid #ffd6dc;
-            background:linear-gradient(180deg,#fff8f8,#fff4f5);
-            color:#a61b45;
-            border-radius:18px;
-            padding:16px 18px;
-            margin-bottom:20px;
+        .custom-member-phone {
+            font-size: 13px;
+            color: #6b7280;
         }
 
-        .form-alert i{
-            font-size:18px;
-            margin-top:2px;
+        .participant-list {
+            background: #f8fbff;
+            border: 1px solid #dfe8f4;
+            border-radius: 18px;
+            padding: 16px;
+            max-height: 220px;
+            overflow-y: auto;
         }
 
-        .form-alert ul{
-            margin:0;
-            padding-left:18px;
+        .participant-list ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
 
-        .custom-split-box{
-            background:#f8fbff;
-            border:1px dashed #cbd9ee;
-            border-radius:20px;
-            padding:18px;
-            margin-top:10px;
+        .participant-list li {
+            margin-bottom: 10px;
         }
 
-        .custom-share-row{
-            border:1px solid #e6edf7;
-            border-radius:18px;
-            padding:14px 16px;
-            margin-bottom:12px;
-            background:#fff;
+        .participant-list label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: white;
+            border: 1px solid #e6edf7;
+            border-radius: 14px;
+            cursor: pointer;
         }
 
-        .custom-member-name{
-            font-weight:600;
-            color:#111827;
+        .primary-action-btn {
+            border: none;
+            border-radius: 16px;
+            padding: 13px 20px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg,#2563eb,#3b82f6);
         }
 
-        .custom-member-phone{
-            font-size:13px;
-            color:var(--muted);
-            margin-top:4px;
-            word-break:break-word;
+        .secondary-action-btn {
+            border-radius: 16px;
+            padding: 13px 20px;
+            font-weight: 600;
+            color: #0f172a;
+            background: #eef3fb;
         }
 
-        .history-wrap{ margin-top:24px; }
-
-        .history-head{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            gap:14px;
-            flex-wrap:wrap;
-            margin-bottom:18px;
+        .history-wrap {
+            margin-top: 24px;
         }
 
-        .history-title{
-            font-size:26px;
-            font-weight:700;
-            margin:0;
-            color:#0f172a;
+        .history-title {
+            font-size: 26px;
+            font-weight: 700;
         }
 
-        .history-count{
-            background:#eff6ff;
-            color:#1d4ed8;
-            border-radius:999px;
-            padding:8px 14px;
-            font-size:13px;
-            font-weight:600;
+        .expense-card {
+            border: 1px solid #e8edf5;
+            border-radius: 24px;
+            padding: 22px;
+            background: white;
+            margin-bottom: 16px;
         }
 
-        .expense-grid{
-            display:grid;
-            grid-template-columns:1fr;
-            gap:16px;
+        .expense-title {
+            font-size: 22px;
+            font-weight: 700;
         }
 
-        .expense-card{
-            border:1px solid #e8edf5;
-            border-radius:24px;
-            padding:22px;
-            background:#fff;
-            transition:.25s ease;
+        .expense-meta {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.8;
         }
 
-        .expense-card:hover{
-            transform:translateY(-2px);
-            box-shadow:0 10px 28px rgba(15,23,42,.06);
+        .badge-soft {
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 700;
         }
 
-        .expense-card-top{
-            display:flex;
-            justify-content:space-between;
-            align-items:flex-start;
-            gap:20px;
-            flex-wrap:wrap;
+        .badge-equal {
+            background: #ebf4ff;
+            color: #1d4ed8;
         }
 
-        .expense-title{
-            font-size:22px;
-            font-weight:700;
-            color:#0f172a;
-            margin-bottom:6px;
+        .badge-custom {
+            background: #fff7e8;
+            color: #c97700;
         }
 
-        .expense-meta{
-            font-size:14px;
-            color:var(--muted);
-            line-height:1.8;
+        .action-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
         }
 
-        .badge-soft{
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
-            border-radius:999px;
-            padding:8px 14px;
-            font-size:12px;
-            font-weight:700;
-            letter-spacing:.2px;
+        .view-btn {
+            background: #ebfff1;
+            color: #16a34a;
         }
 
-        .badge-equal{
-            background:#ebf4ff;
-            color:#1d4ed8;
+        .edit-btn {
+            background: #eaf1ff;
+            color: #2563eb;
         }
 
-        .badge-custom{
-            background:#fff7e8;
-            color:#c97700;
+        .delete-btn {
+            background: #fff1f2;
+            color: #ef4444;
         }
 
-        .actions-wrap{
-            display:flex;
-            gap:10px;
-            align-items:center;
-            flex-wrap:wrap;
+        .split-table-wrap {
+            margin-top: 18px;
+            border: 1px solid #e8edf5;
+            border-radius: 18px;
+            overflow: hidden;
         }
 
-        .action-btn{
-            width:42px;
-            height:42px;
-            border:none;
-            border-radius:14px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            text-decoration:none;
-            font-size:16px;
-            transition:.25s ease;
+        .split-table {
+            width: 100%;
+            margin: 0;
         }
 
-        .view-btn{
-            background:var(--success-soft);
-            color:var(--success);
+        .split-table th,
+        .split-table td {
+            padding: 16px;
+            border-bottom: 1px solid #eef2f7;
         }
 
-        .view-btn:hover{
-            background:var(--success);
-            color:#fff;
+        .split-table th {
+            background: #f8fbff;
+            font-size: 13px;
+            color: #64748b;
         }
 
-        .edit-btn{
-            background:var(--primary-soft);
-            color:var(--primary);
+        .status-tag {
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 700;
         }
 
-        .edit-btn:hover{
-            background:var(--primary);
-            color:#fff;
+        .status-pending {
+            background: #fff7e8;
+            color: #c97700;
         }
 
-        .delete-btn{
-            background:var(--danger-soft);
-            color:var(--danger);
+        .status-settled {
+            background: #ebfff1;
+            color: #15803d;
         }
 
-        .delete-btn:hover{
-            background:var(--danger);
-            color:#fff;
+        .empty-state {
+            text-align: center;
+            padding: 42px 18px;
+            color: #6b7280;
+            border: 1px dashed #d7e1ee;
+            border-radius: 24px;
         }
 
-        .status-tag{
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
-            border-radius:999px;
-            padding:8px 12px;
-            font-size:12px;
-            font-weight:700;
-        }
-
-        .status-pending{
-            background:#fff7e8;
-            color:#c97700;
-        }
-
-        .status-settled{
-            background:#ebfff1;
-            color:#15803d;
-        }
-
-        .split-table-wrap{
-            margin-top:18px;
-            border:1px solid #e8edf5;
-            border-radius:18px;
-            overflow:hidden;
-        }
-
-        .split-table{
-            width:100%;
-            margin:0;
-        }
-
-        .split-table thead{ background:#f8fbff; }
-
-        .split-table th{
-            font-size:13px;
-            text-transform:uppercase;
-            letter-spacing:.4px;
-            color:#64748b;
-            font-weight:700;
-            padding:14px 16px;
-            border-bottom:1px solid #e8edf5;
-        }
-
-        .split-table td{
-            padding:16px;
-            border-bottom:1px solid #eef2f7;
-            font-size:15px;
-            color:#0f172a;
-            vertical-align:middle;
-        }
-
-        .split-table tr:last-child td{ border-bottom:none; }
-
-        .participant-list{
-            background:#f8fbff;
-            border:1px solid #dfe8f4;
-            border-radius:18px;
-            padding:16px;
-            max-height:220px;
-            overflow-y:auto;
-        }
-
-        .participant-list ul{
-            list-style:none;
-            margin:0;
-            padding:0;
-        }
-
-        .participant-list li{
-            margin-bottom:10px;
-        }
-
-        .participant-list label{
-            display:flex;
-            align-items:center;
-            gap:12px;
-            padding:10px 12px;
-            background:#fff;
-            border:1px solid #e6edf7;
-            border-radius:14px;
-            font-weight:500;
-            color:#1e293b;
-            cursor:pointer;
-        }
-
-        .participant-list input[type="checkbox"]{
-            width:18px;
-            height:18px;
-            accent-color:#2563eb;
-        }
-
-        .empty-state{
-            text-align:center;
-            padding:42px 18px;
-            color:var(--muted);
-            border:1px dashed #d7e1ee;
-            border-radius:24px;
-            background:#fbfdff;
-        }
-
-        .empty-state i{
-            font-size:30px;
-            color:#94a3b8;
-        }
-
-        .empty-state h5{
-            margin-top:14px;
-            font-weight:700;
-            color:#334155;
-        }
-
-        .modal-content{
-            border-radius:26px;
-            border:none;
-            box-shadow:0 20px 55px rgba(15,23,42,.18);
-            overflow:hidden;
-        }
-
-        .modal-header{
-            border-bottom:1px solid #edf2f8;
-            padding:22px 24px 16px;
-        }
-
-        .modal-body{
-            padding:18px 24px 8px;
-            color:#475569;
-        }
-
-        .modal-footer{
-            border-top:1px solid #edf2f8;
-            padding:16px 24px 22px;
-        }
-
-        .btn-cancel{
-            background:#f1f5f9;
-            border:none;
-            color:#0f172a;
-            border-radius:14px;
-            font-weight:600;
-            padding:10px 18px;
-        }
-
-        .btn-confirm-logout{
-            background:linear-gradient(135deg,#ef4444,#dc2626);
-            border:none;
-            color:#fff;
-            border-radius:14px;
-            font-weight:600;
-            padding:10px 18px;
-        }
-
-        @media (max-width: 992px){
-            .stats-row{ grid-template-columns:1fr; }
-            .navbar-brand{ font-size:26px; }
-            .page-title{ font-size:28px; }
-        }
-
-        @media (max-width: 768px){
-            .navbar-custom{
-            position:sticky;
-            top:20px;
-            z-index:1000;
-                width:95%;
-                padding:16px 18px;
+        @media (max-width: 992px) {
+            .stats-row {
+                grid-template-columns: 1fr;
             }
-
-            .page-wrap{ width:95%; }
-
-            .expense-card-top{
-                flex-direction:column;
-                align-items:flex-start;
-            }
-
-            .actions-wrap{ width:100%; }
         }
     </style>
 </head>
+
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-custom">
@@ -703,11 +412,15 @@
 </nav>
 
 <div class="page-wrap">
-    <div class="page-head">
+
+    <div class="d-flex justify-content-between align-items-start flex-wrap mb-4">
         <div>
             <h1 class="page-title">{% if editing %}Update Split Expense{% else %}Split Expense{% endif %}</h1>
-            <div class="page-subtitle">Create equal, custom, or percentage group expense splits with all members or selected members.</div>
+            <div class="page-subtitle">
+                Create equal, custom, or percentage group expense splits with all members or selected members.
+            </div>
         </div>
+
         <div class="top-chip">
             <i class="bi bi-receipt-cutoff"></i>
             Total Records: {{ expenses|length }}
@@ -719,10 +432,12 @@
             <h6>Total Split Entries</h6>
             <h3>{{ expenses|length }}</h3>
         </div>
+
         <div class="stat-card bg-success-grad">
             <h6>Mode</h6>
             <h3>{% if editing %}Edit{% else %}Create{% endif %}</h3>
         </div>
+
         <div class="stat-card bg-warning-grad">
             <h6>Split Types</h6>
             <h3>Equal / Custom / %</h3>
@@ -734,22 +449,22 @@
         <div class="section-subtitle">Choose group, split type, participant mode, and create the expense.</div>
 
         {% if form.errors %}
-        <div class="form-alert">
-            <i class="bi bi-exclamation-octagon-fill"></i>
-            <div>
-                <strong>Please fix the following:</strong>
-                <ul>
-                    {% for field in form %}
-                        {% for error in field.errors %}
+            <div class="form-alert">
+                <i class="bi bi-exclamation-octagon-fill"></i>
+                <div>
+                    <strong>Please fix the following:</strong>
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
                             <li>{{ error }}</li>
                         {% endfor %}
-                    {% endfor %}
-                    {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
+                    </ul>
+                </div>
             </div>
-        </div>
         {% endif %}
 
         <form method="POST" id="split-expense-form">
@@ -798,7 +513,7 @@
                 <div class="col-md-12" id="selected-members-wrapper" style="display:none;">
                     <label class="form-label custom-label">Select Members</label>
                     <div id="dynamic-selected-members" class="participant-list"></div>
-                    <div class="helper-text">Only joined members will appear here.</div>
+                    <div class="helper-text">Select members for this split.</div>
                 </div>
 
                 <div class="col-md-12">
@@ -814,7 +529,7 @@
             <div id="custom-split-wrapper" class="custom-split-box mt-4" style="display:none;">
                 <h5 class="mb-3 fw-bold text-dark">Custom Split Amounts</h5>
                 <div id="custom-split-members"></div>
-                <div class="helper-text">Make sure the sum of custom amounts matches the total amount exactly.</div>
+                <div class="helper-text">Make sure the custom split total matches the total amount.</div>
             </div>
 
             <div id="percentage-split-wrapper" class="custom-split-box mt-4" style="display:none;">
@@ -830,10 +545,10 @@
                 </button>
 
                 {% if editing %}
-                <a href="{% url 'split_expense' %}" class="secondary-action-btn text-decoration-none">
-                    <i class="bi bi-arrow-left"></i>
-                    Cancel Edit
-                </a>
+                    <a href="{% url 'split_expense' %}" class="secondary-action-btn text-decoration-none">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel Edit
+                    </a>
                 {% endif %}
             </div>
         </form>
@@ -841,110 +556,108 @@
 
     <div class="history-wrap">
         <div class="card-box p-4 p-md-5">
-            <div class="history-head">
+            <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="history-title">Split Expense History</h2>
-                <div class="history-count">{{ expenses|length }} record{{ expenses|length|pluralize }}</div>
+                <div class="top-chip">{{ expenses|length }} record{{ expenses|length|pluralize }}</div>
             </div>
 
             {% if expenses %}
-            <div class="expense-grid">
                 {% for item in expenses %}
-                <div class="expense-card">
-                    <div class="expense-card-top">
-                        <div>
-                            <div class="expense-title">{{ item.expense.title }}</div>
-                            <div class="expense-meta">
-                                Group: <strong>{{ item.expense.group.name }}</strong> |
-                                Paid by: <strong>{% if item.expense.created_by == request.user %}You{% else %}{{ item.expense.paid_by.name }}{% endif %}</strong> |
-                                Total: <strong>₹{{ item.expense.total_amount }}</strong> |
-                                Members: <strong>{{ item.member_count }}</strong> |
-                                Per Person: <strong>{{ item.per_person }}</strong>
+                    <div class="expense-card">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                            <div>
+                                <div class="expense-title">{{ item.expense.title }}</div>
+                                <div class="expense-meta">
+                                    Group: <strong>{{ item.expense.group.name }}</strong> |
+                                    Paid by: <strong>{% if item.expense.created_by == request.user %}You{% else %}{{ item.expense.paid_by.name }}{% endif %}</strong> |
+                                    Total: <strong>₹{{ item.expense.total_amount }}</strong> |
+                                    Members: <strong>{{ item.member_count }}</strong> |
+                                    Per Person: <strong>{{ item.per_person }}</strong>
+                                </div>
+
+                                <div class="expense-meta">
+                                    Participant Mode: <strong>{{ item.expense.get_participant_mode_display }}</strong>
+                                </div>
                             </div>
 
-                            <div class="expense-meta">
-                                Participant Mode: <strong>{{ item.expense.get_participant_mode_display }}</strong>
+                            <div class="d-flex gap-2 flex-wrap">
+                                {% if item.expense.split_type == "equal" %}
+                                    <span class="badge-soft badge-equal">
+                                        <i class="bi bi-people-fill"></i> Equal
+                                    </span>
+                                {% elif item.expense.split_type == "percentage" %}
+                                    <span class="badge-soft badge-custom">
+                                        <i class="bi bi-percent"></i> Percentage
+                                    </span>
+                                {% else %}
+                                    <span class="badge-soft badge-custom">
+                                        <i class="bi bi-sliders"></i> Custom
+                                    </span>
+                                {% endif %}
+
+                                <a href="{% url 'group_detail' item.expense.group.id %}" class="action-btn view-btn">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+                                {% if item.can_edit %}
+                                    <a href="{% url 'edit_split_expense' item.expense.id %}" class="action-btn edit-btn">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                {% endif %}
+
+                                {% if item.can_delete %}
+                                    <form method="POST" action="{% url 'delete_split_expense' item.expense.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn delete-btn" onclick="return confirm('Delete this split expense?');">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
                             </div>
                         </div>
 
-                        <div class="actions-wrap">
-                            {% if item.expense.split_type == "equal" %}
-                                <span class="badge-soft badge-equal">
-                                    <i class="bi bi-people-fill"></i> Equal
-                                </span>
-                            {% elif item.expense.split_type == "percentage" %}
-                                <span class="badge-soft badge-custom">
-                                    <i class="bi bi-percent"></i> Percentage
-                                </span>
-                            {% else %}
-                                <span class="badge-soft badge-custom">
-                                    <i class="bi bi-sliders"></i> Custom
-                                </span>
-                            {% endif %}
-
-                            <a href="{% url 'group_detail' item.expense.group.id %}" class="action-btn view-btn" title="View Group">
-                                <i class="bi bi-eye"></i>
-                            </a>
-
-                            {% if item.can_edit %}
-                            <a href="{% url 'edit_split_expense' item.expense.id %}" class="action-btn edit-btn" title="Edit Split Expense">
-                                <i class="bi bi-pencil-square"></i>
-                            </a>
-                            {% endif %}
-
-                            {% if item.can_delete %}
-                            <form method="POST" action="{% url 'delete_split_expense' item.expense.id %}" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="action-btn delete-btn" title="Delete Split Expense" onclick="return confirm('Delete this split expense?');">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                            {% endif %}
-                        </div>
+                        {% if item.expense.shares.all %}
+                            <div class="split-table-wrap">
+                                <table class="split-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Member</th>
+                                            <th class="text-end">Share Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for share in item.expense.shares.all %}
+                                            <tr>
+                                                <td>{{ share.friend.name }}</td>
+                                                <td class="text-end">₹{{ share.share_amount }}</td>
+                                                <td>
+                                                    {% if share.is_settled %}
+                                                        <span class="status-tag status-settled">
+                                                            <i class="bi bi-check-circle-fill"></i>
+                                                            Settled
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="status-tag status-pending">
+                                                            <i class="bi bi-clock-history"></i>
+                                                            Pending
+                                                        </span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endif %}
                     </div>
-
-                    {% if item.expense.shares.all %}
-                    <div class="split-table-wrap">
-                        <table class="split-table">
-                            <thead>
-                                <tr>
-                                    <th>Member</th>
-                                    <th class="text-end">Share Amount</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for share in item.expense.shares.all %}
-                                <tr>
-                                    <td>{{ share.friend.name }}</td>
-                                    <td class="text-end">₹{{ share.share_amount }}</td>
-                                    <td>
-                                        {% if share.is_settled %}
-                                            <span class="status-tag status-settled">
-                                                <i class="bi bi-check-circle-fill"></i>
-                                                Settled
-                                            </span>
-                                        {% else %}
-                                            <span class="status-tag status-pending">
-                                                <i class="bi bi-clock-history"></i>
-                                                Pending
-                                            </span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    {% endif %}
-                </div>
                 {% endfor %}
-            </div>
             {% else %}
-            <div class="empty-state">
-                <i class="bi bi-receipt"></i>
-                <h5>No split expenses yet</h5>
-                <div class="mt-2">Start by creating your first shared expense above.</div>
-            </div>
+                <div class="empty-state">
+                    <i class="bi bi-receipt"></i>
+                    <h5>No split expenses yet</h5>
+                    <div class="mt-2">Start by creating your first shared expense above.</div>
+                </div>
             {% endif %}
         </div>
     </div>
@@ -957,14 +670,16 @@
                 <h5 class="modal-title fw-bold">Confirm Logout</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body">
                 Are you sure you want to logout from your account?
             </div>
+
             <div class="modal-footer">
-                <button type="button" class="btn-cancel" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">No</button>
                 <form method="POST" action="{% url 'logout' %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn-confirm-logout">Yes, Logout</button>
+                    <button type="submit" class="btn btn-danger">Yes, Logout</button>
                 </form>
             </div>
         </div>
@@ -980,14 +695,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const groupSelect = document.getElementById("group-select");
     const splitTypeSelect = document.getElementById("split-type-select");
     const participantModeSelect = document.getElementById("participant-mode-select");
+
     const customWrapper = document.getElementById("custom-split-wrapper");
     const customMembers = document.getElementById("custom-split-members");
+
     const percentageWrapper = document.getElementById("percentage-split-wrapper");
     const percentageMembers = document.getElementById("percentage-split-members");
+
     const hiddenCustomData = document.getElementById("custom-split-data");
     const hiddenPercentageData = document.getElementById("percentage-split-data");
+
     const splitExpenseForm = document.getElementById("split-expense-form");
     const totalAmountInput = document.getElementById("id_total_amount");
+
     const selectedMembersWrapper = document.getElementById("selected-members-wrapper");
     const dynamicSelectedMembers = document.getElementById("dynamic-selected-members");
 
@@ -996,209 +716,180 @@ document.addEventListener("DOMContentLoaded", function () {
     let existingPercentageShares = [];
     let selectedParticipantIds = [];
 
-    const customSharesElement = document.getElementById("custom-shares-data");
-    const percentageSharesElement = document.getElementById("percentage-shares-data");
-    const selectedParticipantsElement = document.getElementById("selected-participant-ids-data");
-
-    if (customSharesElement) {
+    function readJsonScript(id) {
+        const el = document.getElementById(id);
+        if (!el) return [];
         try {
-            existingCustomShares = JSON.parse(customSharesElement.textContent);
+            return JSON.parse(el.textContent || "[]");
         } catch (e) {
-            existingCustomShares = [];
+            return [];
         }
     }
 
-    if (percentageSharesElement) {
-        try {
-            existingPercentageShares = JSON.parse(percentageSharesElement.textContent);
-        } catch (e) {
-            existingPercentageShares = [];
-        }
+    existingCustomShares = readJsonScript("custom-shares-data");
+    existingPercentageShares = readJsonScript("percentage-shares-data");
+    selectedParticipantIds = readJsonScript("selected-participant-ids-data");
+
+    function getExistingMap(rows, keyName) {
+        const map = {};
+        rows.forEach(row => {
+            map[String(row.friend_id)] = row[keyName] || "";
+        });
+        return map;
     }
 
-    if (selectedParticipantsElement) {
-        try {
-            selectedParticipantIds = JSON.parse(selectedParticipantsElement.textContent);
-        } catch (e) {
-            selectedParticipantIds = [];
-        }
+    function getSelectedIds() {
+        return Array.from(
+            dynamicSelectedMembers.querySelectorAll("input[name='selected_participants']:checked")
+        ).map(input => String(input.value));
     }
 
-    function renderSelectedParticipants() {
+    function getActiveMembers() {
+        if (!participantModeSelect || participantModeSelect.value !== "selected") {
+            return allMembers;
+        }
+
+        const ids = getSelectedIds();
+        return allMembers.filter(member => ids.includes(String(member.id)));
+    }
+
+    function renderSelectedMembers() {
         dynamicSelectedMembers.innerHTML = "";
 
         if (!allMembers.length) {
-            dynamicSelectedMembers.innerHTML = "<div class='text-muted small'>No joined members available.</div>";
+            dynamicSelectedMembers.innerHTML = "<div class='text-muted small'>No members found.</div>";
             return;
         }
 
         const ul = document.createElement("ul");
+
         allMembers.forEach(member => {
             const li = document.createElement("li");
+            const isChecked =
+                selectedParticipantIds.length === 0 ||
+                selectedParticipantIds.includes(Number(member.id)) ||
+                selectedParticipantIds.includes(String(member.id));
+
             li.innerHTML = `
                 <label>
-                    <input type="checkbox" name="selected_participants" value="${member.id}">
+                    <input type="checkbox" name="selected_participants" value="${member.id}" ${isChecked ? "checked" : ""}>
                     <span>${member.name}${member.email ? " (" + member.email + ")" : ""}</span>
                 </label>
             `;
+
             ul.appendChild(li);
         });
 
         dynamicSelectedMembers.appendChild(ul);
 
-        const inputs = dynamicSelectedMembers.querySelectorAll('input[name="selected_participants"]');
-        inputs.forEach(input => {
-            if (selectedParticipantIds.includes(Number(input.value)) || selectedParticipantIds.includes(String(input.value))) {
-                input.checked = true;
-            }
-            input.addEventListener("change", refreshSplitEditors);
+        dynamicSelectedMembers.querySelectorAll("input[name='selected_participants']").forEach(input => {
+            input.addEventListener("change", renderSplitInputs);
         });
     }
 
-    function getSelectedParticipantIds() {
-        return Array.from(dynamicSelectedMembers.querySelectorAll('input[name="selected_participants"]'))
-            .filter(input => input.checked)
-            .map(input => String(input.value));
-    }
-
-    function getFilteredMembers() {
-        if (!participantModeSelect || participantModeSelect.value !== "selected") {
-            return allMembers;
-        }
-
-        const ids = getSelectedParticipantIds();
-        return allMembers.filter(member => ids.includes(String(member.id)));
-    }
-
-    function renderCustomInputs(members, existingMap = {}) {
+    function renderCustomInputs(members) {
         customMembers.innerHTML = "";
 
+        if (!members.length) {
+            customMembers.innerHTML = "<div class='text-muted small'>No members available.</div>";
+            return;
+        }
+
+        const existingMap = getExistingMap(existingCustomShares, "amount");
+
         members.forEach(member => {
-            const amount = existingMap[member.id] || existingMap[String(member.id)] || "";
-            const row = document.createElement("div");
-            row.className = "custom-share-row";
-            row.innerHTML = `
-                <div class="row align-items-center g-3">
-                    <div class="col-md-6">
-                        <div class="custom-member-name">${member.name}</div>
-                        ${member.email ? `<div class="custom-member-phone">${member.email}</div>` : ""}
-                    </div>
-                    <div class="col-md-6">
-                        <input
-                            type="number"
-                            step="0.01"
-                            class="form-control custom-share-input"
-                            data-friend-id="${member.id}"
-                            data-friend-name="${member.name}"
-                            value="${amount}"
-                            placeholder="Enter amount"
-                        >
+            const value = existingMap[String(member.id)] || "";
+
+            customMembers.innerHTML += `
+                <div class="custom-share-row">
+                    <div class="row align-items-center g-3">
+                        <div class="col-md-6">
+                            <div class="custom-member-name">${member.name}</div>
+                            ${member.email ? `<div class="custom-member-phone">${member.email}</div>` : ""}
+                        </div>
+                        <div class="col-md-6">
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0.01"
+                                class="form-control custom-share-input"
+                                data-friend-id="${member.id}"
+                                value="${value}"
+                                placeholder="Enter amount"
+                            >
+                        </div>
                     </div>
                 </div>
             `;
-            customMembers.appendChild(row);
         });
     }
 
-    function renderPercentageInputs(members, existingMap = {}) {
+    function renderPercentageInputs(members) {
         percentageMembers.innerHTML = "";
 
+        if (!members.length) {
+            percentageMembers.innerHTML = "<div class='text-muted small'>No members available.</div>";
+            return;
+        }
+
+        const existingMap = getExistingMap(existingPercentageShares, "percentage");
+
         members.forEach(member => {
-            const percentage = existingMap[member.id] || existingMap[String(member.id)] || "";
-            const row = document.createElement("div");
-            row.className = "custom-share-row";
-            row.innerHTML = `
-                <div class="row align-items-center g-3">
-                    <div class="col-md-6">
-                        <div class="custom-member-name">${member.name}</div>
-                        ${member.email ? `<div class="custom-member-phone">${member.email}</div>` : ""}
-                    </div>
-                    <div class="col-md-6">
-                        <input
-                            type="number"
-                            step="0.01"
-                            class="form-control percentage-share-input"
-                            data-friend-id="${member.id}"
-                            data-friend-name="${member.name}"
-                            value="${percentage}"
-                            placeholder="Enter percentage"
-                        >
+            const value = existingMap[String(member.id)] || "";
+
+            percentageMembers.innerHTML += `
+                <div class="custom-share-row">
+                    <div class="row align-items-center g-3">
+                        <div class="col-md-6">
+                            <div class="custom-member-name">${member.name}</div>
+                            ${member.email ? `<div class="custom-member-phone">${member.email}</div>` : ""}
+                        </div>
+                        <div class="col-md-6">
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0.01"
+                                max="100"
+                                class="form-control percentage-share-input"
+                                data-friend-id="${member.id}"
+                                value="${value}"
+                                placeholder="Enter percentage"
+                            >
+                        </div>
                     </div>
                 </div>
             `;
-            percentageMembers.appendChild(row);
         });
     }
 
-    function saveCustomSplitData() {
-        const rows = document.querySelectorAll(".custom-share-input");
-        const data = [];
-
-        rows.forEach(input => {
-            const value = input.value.trim();
-            if (value !== "") {
-                data.push({
-                    friend_id: input.dataset.friendId,
-                    amount: value
-                });
-            }
-        });
-
-        hiddenCustomData.value = JSON.stringify(data);
-    }
-
-    function savePercentageSplitData() {
-        const rows = document.querySelectorAll(".percentage-share-input");
-        const data = [];
-
-        rows.forEach(input => {
-            const value = input.value.trim();
-            if (value !== "") {
-                data.push({
-                    friend_id: input.dataset.friendId,
-                    percentage: value
-                });
-            }
-        });
-
-        hiddenPercentageData.value = JSON.stringify(data);
-    }
-
-    function refreshSplitEditors() {
-        const members = getFilteredMembers();
-
-        const existingCustomMap = {};
-        existingCustomShares.forEach(item => {
-            existingCustomMap[item.friend_id] = item.amount;
-        });
-
-        const existingPercentageMap = {};
-        existingPercentageShares.forEach(item => {
-            existingPercentageMap[item.friend_id] = item.percentage;
-        });
-
-        renderCustomInputs(members, existingCustomMap);
-        renderPercentageInputs(members, existingPercentageMap);
-    }
-
-    function toggleSplitSections() {
+    function renderSplitInputs() {
         if (!splitTypeSelect) return;
 
-        customWrapper.style.display = splitTypeSelect.value === "custom" ? "block" : "none";
-        percentageWrapper.style.display = splitTypeSelect.value === "percentage" ? "block" : "none";
+        const splitType = splitTypeSelect.value;
+        const members = getActiveMembers();
 
-        if (splitTypeSelect.value !== "custom") {
-            hiddenCustomData.value = "";
+        customWrapper.style.display = splitType === "custom" ? "block" : "none";
+        percentageWrapper.style.display = splitType === "percentage" ? "block" : "none";
+
+        hiddenCustomData.value = "";
+        hiddenPercentageData.value = "";
+
+        if (splitType === "custom") {
+            renderCustomInputs(members);
         }
-        if (splitTypeSelect.value !== "percentage") {
-            hiddenPercentageData.value = "";
+
+        if (splitType === "percentage") {
+            renderPercentageInputs(members);
         }
     }
 
-    function toggleParticipantSection() {
+    function toggleParticipantMode() {
         if (!participantModeSelect) return;
-        selectedMembersWrapper.style.display = participantModeSelect.value === "selected" ? "block" : "none";
-        refreshSplitEditors();
+
+        selectedMembersWrapper.style.display =
+            participantModeSelect.value === "selected" ? "block" : "none";
+
+        renderSplitInputs();
     }
 
     function loadMembers(groupId) {
@@ -1210,13 +901,42 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!groupId) return;
 
         fetch(`/groups/${groupId}/members/`)
-            .then(res => res.json())
+            .then(response => response.json())
             .then(data => {
                 allMembers = data;
-                renderSelectedParticipants();
-                refreshSplitEditors();
+                renderSelectedMembers();
+                toggleParticipantMode();
+                renderSplitInputs();
             })
-            .catch(error => console.error("Error loading group members:", error));
+            .catch(error => {
+                console.error("Members loading failed:", error);
+            });
+    }
+
+    function saveCustomData() {
+        const data = [];
+
+        document.querySelectorAll(".custom-share-input").forEach(input => {
+            data.push({
+                friend_id: input.dataset.friendId,
+                amount: input.value.trim()
+            });
+        });
+
+        hiddenCustomData.value = JSON.stringify(data);
+    }
+
+    function savePercentageData() {
+        const data = [];
+
+        document.querySelectorAll(".percentage-share-input").forEach(input => {
+            data.push({
+                friend_id: input.dataset.friendId,
+                percentage: input.value.trim()
+            });
+        });
+
+        hiddenPercentageData.value = JSON.stringify(data);
     }
 
     if (groupSelect && groupSelect.value) {
@@ -1226,58 +946,80 @@ document.addEventListener("DOMContentLoaded", function () {
     if (groupSelect) {
         groupSelect.addEventListener("change", function () {
             selectedParticipantIds = [];
+            existingCustomShares = [];
+            existingPercentageShares = [];
             loadMembers(this.value);
         });
     }
 
     if (splitTypeSelect) {
-        toggleSplitSections();
-        splitTypeSelect.addEventListener("change", toggleSplitSections);
+        splitTypeSelect.addEventListener("change", renderSplitInputs);
     }
 
     if (participantModeSelect) {
-        toggleParticipantSection();
-        participantModeSelect.addEventListener("change", toggleParticipantSection);
+        participantModeSelect.addEventListener("change", toggleParticipantMode);
     }
 
     if (splitExpenseForm) {
         splitExpenseForm.addEventListener("submit", function (event) {
+            const splitType = splitTypeSelect.value;
+
             if (participantModeSelect && participantModeSelect.value === "selected") {
-                const ids = getSelectedParticipantIds();
-                if (!ids.length) {
+                if (!getSelectedIds().length) {
                     alert("Please select at least one member.");
                     event.preventDefault();
                     return;
                 }
             }
 
-            if (splitTypeSelect && splitTypeSelect.value === "custom") {
-                saveCustomSplitData();
+            if (splitType === "custom") {
+                saveCustomData();
 
-                const total = parseFloat(totalAmountInput?.value || 0);
+                const total = parseFloat(totalAmountInput.value || "0");
                 let sum = 0;
+                let hasEmpty = false;
 
                 document.querySelectorAll(".custom-share-input").forEach(input => {
-                    sum += parseFloat(input.value || 0);
+                    if (!input.value.trim()) {
+                        hasEmpty = true;
+                    }
+                    sum += parseFloat(input.value || "0");
                 });
 
-                if (sum !== total) {
-                    alert("Custom split must match total amount.");
+                if (hasEmpty) {
+                    alert("Please enter custom amount for every member.");
+                    event.preventDefault();
+                    return;
+                }
+
+                if (Math.abs(sum - total) > 0.01) {
+                    alert("Custom split total must match total amount.");
                     event.preventDefault();
                     return;
                 }
             }
 
-            if (splitTypeSelect && splitTypeSelect.value === "percentage") {
-                savePercentageSplitData();
+            if (splitType === "percentage") {
+                savePercentageData();
 
-                let totalPercentage = 0;
+                let sum = 0;
+                let hasEmpty = false;
+
                 document.querySelectorAll(".percentage-share-input").forEach(input => {
-                    totalPercentage += parseFloat(input.value || 0);
+                    if (!input.value.trim()) {
+                        hasEmpty = true;
+                    }
+                    sum += parseFloat(input.value || "0");
                 });
 
-                if (totalPercentage !== 100) {
-                    alert("Percentage split must total 100.");
+                if (hasEmpty) {
+                    alert("Please enter percentage for every member.");
+                    event.preventDefault();
+                    return;
+                }
+
+                if (Math.abs(sum - 100) > 0.01) {
+                    alert("Percentage split total must be exactly 100.");
                     event.preventDefault();
                     return;
                 }
@@ -1288,5 +1030,6 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
