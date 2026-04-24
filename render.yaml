@@ -21,3 +21,7 @@ services:
         fromDatabase:
           name: expense-tracker-db
           property: connectionString
+
+          
+print("DATABASE ENGINE:", DATABASES["default"]["ENGINE"])
+print("DATABASE NAME:", DATABASES["default"].get("NAME"))
