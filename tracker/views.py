@@ -114,15 +114,25 @@ def _build_equal_shares(expense):
         amount = share
         if index == member_count - 1:
             amount = total - total_created
-
-        created_shares.append(
-            SplitShare(
-                expense=expense,
-                friend=member,
-                share_amount=amount
+        
+        if member == expense.paid_by:
+            created_shares.append(
+                SplitShare(
+                    expense=expense,
+                    friend=member,
+                    share_amount=0,
+                    is_settled=True
+                )
             )
-        )
-        total_created += amount
+        else:
+            created_shares.append(
+                SplitShare(
+                    expense=expense,
+                    friend=member,
+                    share_amount=amount
+                )
+            )
+            total_created += amount
 
     SplitShare.objects.bulk_create(created_shares)
 
