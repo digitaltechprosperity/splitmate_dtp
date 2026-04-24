@@ -749,7 +749,7 @@
                                         {% endif %}
                                     </td>
                                     <td>
-                                        {% if not share.is_settled and row.can_mark %}
+                                        {% if not share.is_settled and row.can_mark and share.friend != item.expense.paid_by %}
                                         <form method="POST" action="{% url 'mark_share_settled' share.id %}">
                                             {% csrf_token %}
                                             <button type="submit" class="mini-btn mini-edit">Mark Settled</button>
