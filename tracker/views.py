@@ -571,7 +571,7 @@ def set_password(request, token):
         reset.is_used = True
         reset.save()
 
-        messages.success(request, "Password created successfully. Please login.")
+        messages.success(request, "Password created successfully. Please login.", extra_tags="auth")
         return redirect("login")
 
     return render(request, "set_password.html")
@@ -1393,7 +1393,9 @@ Expense Tracker
 
         messages.success(
             request,
-            "If an account exists with this username or Gmail, a password reset link has been sent."
+            "If an account exists with this username or Gmail, a password reset link has been sent.",
+            extra_tags="auth"
+
         )
         return redirect("login")
 
