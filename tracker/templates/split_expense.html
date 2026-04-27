@@ -482,7 +482,8 @@
 
                 <div class="col-md-6">
                     <label class="form-label custom-label">Paid By</label>
-                    <input type="text" class="form-control" value="{{ request.user.username }}" readonly>
+                    <input type="text" class="form-control"
+                value="{{ request.user.first_name|default:request.user.username }}" readonly>
                     <div class="helper-text">Automatically set to the logged in user.</div>
                 </div>
 

@@ -628,8 +628,12 @@
             <a href="{% url 'settlements' %}" class="nav-link-custom {% if request.path == '/settlements/' %}active-link{% endif %}">Settlements</a>
 
             <div class="user-badge">
-                <div class="user-avatar">{{ request.user.username|first|upper }}</div>
-                <p class="user-name mb-0">{{ request.user.username }}</p>
+                <div class="user-avatar">
+                    {{ request.user.first_name|default:request.user.username|first|upper }}
+                </div>
+                <p class="user-name mb-0">
+                    {{ request.user.first_name|default:request.user.username }}
+                </p>
             </div>
 
             <button type="button" class="logout-icon-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">
