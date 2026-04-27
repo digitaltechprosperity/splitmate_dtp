@@ -558,6 +558,32 @@
                 align-items:flex-start;
             }
         }
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -0.3px;
+        }
+
+        .logo-text span {
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
 
@@ -565,7 +591,12 @@
 
 <nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'dashboard' %}">Expense Tracker</a>
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'dashboard' %}">
+            <div class="logo-icon">S</div>
+            <span class="logo-text">
+                Split<span>Mate</span>
+            </span>
+        </a>
 
         <div class="d-flex align-items-center gap-4 ms-auto flex-wrap">
             <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">Dashboard</a>
@@ -575,8 +606,12 @@
             <a href="{% url 'settlements' %}" class="nav-link-custom {% if request.path == '/settlements/' %}active-link{% endif %}">Settlements</a>
 
             <div class="user-badge">
-                <div class="user-avatar">{{ request.user.username|first|upper }}</div>
-                <p class="user-name mb-0">{{ request.user.username }}</p>
+                <div class="user-avatar">
+                    {{ request.user.first_name|default:request.user.username|first|upper }}
+                </div>
+                <p class="user-name mb-0">
+                    {{ request.user.first_name|default:request.user.username }}
+                </p>
             </div>
 
             <button type="button" class="logout-icon-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">

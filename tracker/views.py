@@ -45,8 +45,8 @@ def get_accessible_groups(user):
 def get_group_for_user_or_404(user, group_id):
     return get_object_or_404(get_accessible_groups(user), id=group_id)
 
-
 def get_group_friend_for_user(group, user):
+    # Try linked user
     friend = Friend.objects.filter(
         groupmember__group=group,
         linked_user=user
@@ -55,14 +55,34 @@ def get_group_friend_for_user(group, user):
     if friend:
         return friend
 
-    if group.user_id == user.id:
-        return Friend.objects.filter(
-            user=group.user,
-            email__iexact=user.email
-        ).first()
+    # Try email match
+    friend = Friend.objects.filter(
+        user=group.user,
+        email__iexact=user.email
+    ).first()
 
-    return None
+    if friend:
+        friend.linked_user = user
+        friend.save(update_fields=["linked_user"])
+        return friend
 
+    # 🔥 FINAL GUARANTEED FIX
+    # Ensure friend exists in THIS group
+    friend = Friend.objects.create(
+        user=group.user,
+        name=user.first_name or user.username,
+        email=user.email,
+        linked_user=user
+    )
+
+    GroupMember.objects.create(
+        group=group,
+        friend=friend,
+        role=GroupMember.ROLE_MEMBER,
+        invite_status=GroupMember.STATUS_JOINED
+    )
+
+    return friend
 
 def _store_pending_invite_token(request):
     token = request.GET.get("invite") or request.POST.get("invite")
@@ -96,7 +116,6 @@ def _save_selected_participants(expense, selected_participants):
     if rows:
         SplitParticipant.objects.bulk_create(rows)
 
-
 def _build_equal_shares(expense):
     participants = list(expense.validate_participants())
     member_count = len(participants)
@@ -108,19 +127,14 @@ def _build_equal_shares(expense):
     share = _round_money(total / member_count)
 
     created_shares = []
-    total_created = Decimal("0.00")
 
-    for index, member in enumerate(participants):
-        amount = share
-        if index == member_count - 1:
-            amount = total - total_created
-        
+    for member in participants:
         if member == expense.paid_by:
             created_shares.append(
                 SplitShare(
                     expense=expense,
                     friend=member,
-                    share_amount=0,
+                    share_amount=share,   # ✅ FIX
                     is_settled=True
                 )
             )
@@ -129,13 +143,11 @@ def _build_equal_shares(expense):
                 SplitShare(
                     expense=expense,
                     friend=member,
-                    share_amount=amount
+                    share_amount=share   # ✅ FIX
                 )
             )
-            total_created += amount
 
     SplitShare.objects.bulk_create(created_shares)
-
 
 def _build_custom_shares(expense, custom_data):
     try:
@@ -497,7 +509,7 @@ class RegisterView(FormView):
         email = form.cleaned_data["email"].strip().lower()
 
         user = User(
-            username=email,          # unique internal username
+            username = display_name.lower().replace(" ", "")   ,       # unique internal username
             email=email,
             first_name=display_name  # store display name here
         )
