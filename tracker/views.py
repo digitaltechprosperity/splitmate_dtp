@@ -509,7 +509,7 @@ class RegisterView(FormView):
         email = form.cleaned_data["email"].strip().lower()
 
         user = User(
-            username=email,          # unique internal username
+            username = display_name.lower().replace(" ", "")   ,       # unique internal username
             email=email,
             first_name=display_name  # store display name here
         )
