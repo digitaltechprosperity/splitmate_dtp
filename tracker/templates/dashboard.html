@@ -663,7 +663,8 @@
 
             <div class="user-badge">
                 <div class="user-avatar">{{ request.user.first_name|default:request.user.username|first|upper }}</div>
-                <p class="user-name mb-0">{{ request.user.first_name|default:request.user.username }}p>
+                <p class="user-name mb-0">{{ request.user.first_name|default:request.user.username }}
+                </p>
             </div>
 
             <button type="button" class="logout-icon-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">
