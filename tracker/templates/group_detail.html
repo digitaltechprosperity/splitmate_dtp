@@ -611,17 +611,23 @@
         </div>
 
         <div class="head-actions">
-            {% if can_create_split %}
-            <a href="{% url 'split_expense' %}" class="head-btn-primary">
-                <i class="bi bi-plus-circle"></i>
-                Add Split Expense
-            </a>
-            {% endif %}
-            <a href="{% url 'groups_list' %}" class="head-btn-secondary">
-                <i class="bi bi-arrow-left"></i>
-                Back to Groups
-            </a>
-        </div>
+        {% if can_create_split %}
+        <a href="{% url 'group_add_members' group.id %}" class="head-btn-secondary">
+            <i class="bi bi-person-plus"></i>
+            Add Members
+        </a>
+
+        <a href="{% url 'split_expense' %}?group={{ group.id }}" class="head-btn-primary">
+            <i class="bi bi-plus-circle"></i>
+            Add Expense
+        </a>
+        {% endif %}
+
+        <a href="{% url 'groups_list' %}" class="head-btn-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Back to Groups
+        </a>
+    </div>
     </div>
 
     <div class="stats-row">

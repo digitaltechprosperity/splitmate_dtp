@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -250,33 +250,6 @@
             margin-bottom:24px;
         }
 
-        .warning-card{
-            background:linear-gradient(135deg,#fff8e7,#fff3d6);
-            border:1px solid #ffe2a8;
-            border-radius:22px;
-            padding:18px 20px;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            gap:14px;
-            flex-wrap:wrap;
-            margin-bottom:22px;
-        }
-
-        .warning-card strong{ color:#8a5a00; }
-
-        .warning-btn{
-            border:none;
-            background:#fff;
-            color:#8a5a00;
-            padding:11px 16px;
-            border-radius:14px;
-            font-weight:600;
-            text-decoration:none;
-        }
-
-        .warning-btn:hover{ background:#fff8ef; }
-
         .form-label.custom-label{
             font-weight:600;
             color:#1f2937;
@@ -304,21 +277,13 @@
         }
 
         .member-box{
-            max-height:260px;
+            max-height:280px;
             overflow-y:auto;
             background:linear-gradient(180deg,#f8fbff,#fdfefe);
             border:1px solid #dfe8f4;
             border-radius:18px;
             padding:16px;
         }
-
-        .member-box ul{
-            list-style:none;
-            margin:0;
-            padding:0;
-        }
-
-        .member-box li{ margin-bottom:12px; }
 
         .member-box label{
             display:flex;
@@ -332,6 +297,11 @@
             color:#1e293b;
             transition:.2s ease;
             cursor:pointer;
+            margin-bottom:12px;
+        }
+
+        .member-box label:last-child{
+            margin-bottom:0;
         }
 
         .member-box label:hover{
@@ -343,6 +313,11 @@
             width:18px;
             height:18px;
             accent-color:#2563eb;
+        }
+
+        .friend-email{
+            color:#64748b;
+            font-size:13px;
         }
 
         .primary-action-btn{
@@ -379,6 +354,24 @@
         }
 
         .secondary-action-btn:hover{ background:#dfe8f7; }
+
+        .form-alert{
+            border:1px solid #ffd7dc;
+            background:linear-gradient(180deg,#fff8f8,#fff4f5);
+            color:#9f1239;
+            border-radius:18px;
+            padding:16px 18px;
+            margin-bottom:20px;
+        }
+
+        .success-alert{
+            border:1px solid #bbf7d0;
+            background:#f0fdf4;
+            color:#166534;
+            border-radius:18px;
+            padding:14px 18px;
+            margin-bottom:20px;
+        }
 
         .groups-head{
             display:flex;
@@ -451,35 +444,12 @@
             font-weight:600;
         }
 
-        .pill-members{
-            background:#eef6ff;
-            color:#1d4ed8;
-        }
-
-        .pill-total{
-            background:#eefdf3;
-            color:#15803d;
-        }
-
-        .pill-pending{
-            background:#fff7e8;
-            color:#c97700;
-        }
-
-        .pill-joined{
-            background:#ebfff1;
-            color:#15803d;
-        }
-
-        .pill-role-owner{
-            background:#ebfff1;
-            color:#15803d;
-        }
-
-        .pill-role-member{
-            background:#fff7e8;
-            color:#c97700;
-        }
+        .pill-members{ background:#eef6ff; color:#1d4ed8; }
+        .pill-total{ background:#eefdf3; color:#15803d; }
+        .pill-pending{ background:#fff7e8; color:#c97700; }
+        .pill-joined{ background:#ebfff1; color:#15803d; }
+        .pill-role-owner{ background:#ebfff1; color:#15803d; }
+        .pill-role-member{ background:#fff7e8; color:#c97700; }
 
         .action-group{
             display:flex;
@@ -501,35 +471,14 @@
             transition:.25s ease;
         }
 
-        .view-btn{
-            background:var(--success-soft);
-            color:var(--success);
-        }
+        .view-btn{ background:var(--success-soft); color:var(--success); }
+        .view-btn:hover{ background:var(--success); color:#fff; }
 
-        .view-btn:hover{
-            background:var(--success);
-            color:#fff;
-        }
+        .edit-btn{ background:var(--primary-soft); color:var(--primary); }
+        .edit-btn:hover{ background:var(--primary); color:#fff; }
 
-        .edit-btn{
-            background:var(--primary-soft);
-            color:var(--primary);
-        }
-
-        .edit-btn:hover{
-            background:var(--primary);
-            color:#fff;
-        }
-
-        .delete-btn{
-            background:var(--danger-soft);
-            color:var(--danger);
-        }
-
-        .delete-btn:hover{
-            background:var(--danger);
-            color:#fff;
-        }
+        .delete-btn{ background:var(--danger-soft); color:var(--danger); }
+        .delete-btn:hover{ background:var(--danger); color:#fff; }
 
         .empty-state{
             text-align:center;
@@ -599,9 +548,6 @@
 
         @media (max-width: 768px){
             .navbar-custom{
-            position:sticky;
-            top:20px;
-            z-index:1000;
                 width:95%;
                 padding:16px 18px;
             }
@@ -614,6 +560,7 @@
         }
     </style>
 </head>
+
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-custom">
@@ -643,8 +590,9 @@
     <div class="page-head">
         <div>
             <h1 class="page-title">{% if editing_group %}Edit Group{% else %}Groups{% endif %}</h1>
-            <div class="page-subtitle">Create and manage group-based expense collections with invite-aware status tracking.</div>
+            <div class="page-subtitle">Create friends and groups from the same page.</div>
         </div>
+
         <div class="top-chip">
             <i class="bi bi-collection"></i>
             Total Groups: {{ groups|length }}
@@ -656,49 +604,125 @@
             <h6>Total Groups</h6>
             <h3>{{ groups|length }}</h3>
         </div>
+
         <div class="stat-card bg-success-grad">
             <h6>Available Friends</h6>
             <h3>{{ friends_count }}</h3>
         </div>
+
         <div class="stat-card bg-violet-grad">
             <h6>Mode</h6>
             <h3>{% if editing_group %}Edit{% else %}Create{% endif %}</h3>
         </div>
     </div>
 
-    {% if friends_count == 0 %}
-    <div class="warning-card">
-        <div>
-            <strong>No friends found.</strong>
-            <div class="mt-1 text-muted">Create friends first before creating a group.</div>
-        </div>
-        <a href="{% url 'friends_list' %}" class="warning-btn">Go to Friends</a>
-    </div>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="success-alert">
+                {{ message }}
+            </div>
+        {% endfor %}
     {% endif %}
 
     <div class="card-box p-4 p-md-5 mb-4">
         <div class="section-title">{% if editing_group %}Update Group{% else %}Create New Group{% endif %}</div>
-        <div class="section-subtitle">Choose members by email. Existing users will join directly; others will receive an invite link.</div>
+        <div class="section-subtitle">
+            Add a friend here, then select friends to create a group.
+        </div>
+
+        {% if not editing_group %}
+        <form method="POST" class="mb-4">
+            {% csrf_token %}
+
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-person-plus"></i>
+                Add Friend
+            </h5>
+
+            {% if friend_form.errors %}
+                <div class="form-alert">
+                    {{ friend_form.errors }}
+                </div>
+            {% endif %}
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label custom-label">Friend Name</label>
+                    {{ friend_form.name }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label custom-label">Friend Gmail</label>
+                    {{ friend_form.email }}
+                </div>
+            </div>
+
+            <button class="secondary-action-btn mt-3" type="submit" name="add_friend">
+                <i class="bi bi-person-plus"></i>
+                Add Friend
+            </button>
+        </form>
+
+        <hr class="my-4">
+        {% endif %}
 
         <form method="POST">
             {% csrf_token %}
 
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-people"></i>
+                {% if editing_group %}Update Group Details{% else %}Create Group{% endif %}
+            </h5>
+
+            {% if form.errors %}
+                <div class="form-alert">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+
             <div class="mb-4">
                 <label class="form-label custom-label">Group Name</label>
                 {{ form.name }}
-                <div class="helper-text">Use a clear group name like Trip, Hostel, Team Lunch, Flatmates, or College Friends.</div>
+                <div class="helper-text">
+                    Example: Trip, Hostel, Team Lunch, Flatmates, or College Friends.
+                </div>
             </div>
 
             <div class="mb-4">
-                <label class="form-label custom-label">Select Members</label>
+                <label class="form-label custom-label">Select Friends</label>
+
                 <div class="member-box">
-                    {{ form.members }}
+                    {% if friends %}
+                        {% for friend in friends %}
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    name="members"
+                                    value="{{ friend.id }}"
+                                    {% if friend in form.members.value %}checked{% endif %}
+                                >
+                                <span>
+                                    <strong>{{ friend.name }}</strong>
+                                    <span class="friend-email">({{ friend.email }})</span>
+                                </span>
+                            </label>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="bi bi-person-plus"></i>
+                            <h5>No friends added yet</h5>
+                            <div class="mt-2">Add friends above, then select them for the group.</div>
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="helper-text">Users with existing accounts will be linked automatically. Others will get an email invite.</div>
+
+                <div class="helper-text">
+                    Already created friends will appear here. Select friends and create the group.
+                </div>
             </div>
 
             <div class="d-flex gap-3 flex-wrap">
-                <button class="primary-action-btn" type="submit">
+                <button class="primary-action-btn" type="submit" name="{% if editing_group %}update_group{% else %}create_group{% endif %}">
                     <i class="bi bi-check2-circle"></i>
                     {% if editing_group %}Update Group{% else %}Create Group{% endif %}
                 </button>
@@ -725,19 +749,23 @@
             <div class="group-item">
                 <div>
                     <div class="group-name">{{ item.group.name }}</div>
+
                     <div class="summary-row">
                         <div class="summary-pill pill-members">
                             <i class="bi bi-people-fill"></i>
                             Members: {{ item.members_count }}
                         </div>
+
                         <div class="summary-pill pill-total">
                             <i class="bi bi-currency-rupee"></i>
                             Total Shared: ₹{{ item.total_amount }}
                         </div>
+
                         <div class="summary-pill pill-pending">
                             <i class="bi bi-envelope-paper"></i>
                             Pending: {{ item.pending_count|default:"0" }}
                         </div>
+
                         <div class="summary-pill pill-joined">
                             <i class="bi bi-person-check-fill"></i>
                             Joined: {{ item.joined_count|default:"0" }}
@@ -797,11 +825,14 @@
                 <h5 class="modal-title fw-bold">Confirm Logout</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body">
                 Are you sure you want to logout from your account?
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" data-bs-dismiss="modal">No</button>
+
                 <form method="POST" action="{% url 'logout' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn-confirm-logout">Yes, Logout</button>
@@ -812,5 +843,170 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Groups</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body{font-family:'Poppins',sans-serif;background:#f4f7fb;color:#162033;}
+        .navbar-custom{position:sticky;top:20px;z-index:1000;background:#fff;border-radius:28px;margin:20px auto;width:92%;padding:14px 28px;box-shadow:0 12px 35px rgba(15,23,42,.08);}
+        .navbar-brand{font-weight:700;font-size:32px;color:#0f172a;}
+        .nav-link-custom{color:#263247;font-weight:500;text-decoration:none;}
+        .active-link{color:#2563eb!important;font-weight:600;}
+        .user-badge{display:flex;align-items:center;gap:12px;background:#f8fbff;border:1px solid #e8edf5;padding:8px 14px 8px 8px;border-radius:999px;}
+        .user-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+        .logout-icon-btn{width:46px;height:46px;border-radius:50%;border:none;background:#fff1f2;color:#ef4444;}
+        .page-wrap{width:min(1140px,92%);margin:28px auto 50px;}
+        .page-head{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:24px;}
+        .page-title{font-size:36px;font-weight:700;color:#0f172a;margin:0;}
+        .page-subtitle{color:#6b7280;font-size:14px;margin-top:6px;}
+        .primary-action-btn{border:none;border-radius:16px;padding:13px 20px;font-weight:600;color:#fff;background:linear-gradient(135deg,#2563eb,#3b82f6);display:inline-flex;align-items:center;gap:8px;text-decoration:none;box-shadow:0 10px 22px rgba(37,99,235,.18);}
+        .card-box{background:#fff;border:1px solid #e8edf5;border-radius:28px;box-shadow:0 10px 30px rgba(15,23,42,.08);}
+        .group-list{display:grid;gap:16px;}
+        .group-item{border:1px solid #e8edf5;border-radius:24px;padding:20px 22px;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;}
+        .group-name{font-size:22px;font-weight:700;color:#0f172a;margin-bottom:10px;}
+        .summary-row{display:flex;gap:10px;flex-wrap:wrap;}
+        .summary-pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 14px;font-size:13px;font-weight:600;}
+        .pill-members{background:#eef6ff;color:#1d4ed8;}
+        .pill-total{background:#eefdf3;color:#15803d;}
+        .pill-pending{background:#fff7e8;color:#c97700;}
+        .pill-joined{background:#ebfff1;color:#15803d;}
+        .pill-role-owner{background:#ebfff1;color:#15803d;}
+        .pill-role-member{background:#fff7e8;color:#c97700;}
+        .action-group{display:flex;gap:10px;}
+        .action-btn{width:44px;height:44px;border:none;border-radius:14px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:17px;}
+        .view-btn{background:#ebfff1;color:#16a34a;}
+        .edit-btn{background:#eaf1ff;color:#2563eb;}
+        .delete-btn{background:#fff1f2;color:#ef4444;}
+        .empty-state{text-align:center;padding:42px 18px;color:#6b7280;border:1px dashed #d7e1ee;border-radius:24px;background:#fbfdff;}
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'dashboard' %}">Expense Tracker</a>
+        <div class="d-flex align-items-center gap-4 ms-auto flex-wrap">
+            <a href="{% url 'dashboard' %}" class="nav-link-custom">Dashboard</a>
+            <a href="{% url 'groups_list' %}" class="nav-link-custom active-link">Groups</a>
+            <a href="{% url 'friends_list' %}" class="nav-link-custom">Friends</a>
+            <a href="{% url 'split_expense' %}" class="nav-link-custom">Split Expense</a>
+            <a href="{% url 'settlements' %}" class="nav-link-custom">Settlements</a>
+
+            <div class="user-badge">
+                <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+                <p class="mb-0 fw-semibold">{{ request.user.username }}</p>
+            </div>
+
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-icon-btn">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="page-wrap">
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Groups</h1>
+            <div class="page-subtitle">View all active groups and start a new group flow.</div>
+        </div>
+
+        <a href="{% url 'group_create_step' %}" class="primary-action-btn">
+            <i class="bi bi-plus-circle"></i>
+            Start New Group
+        </a>
+    </div>
+
+    <div class="card-box p-4 p-md-5">
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+            <h2 class="fw-bold mb-0">Group List</h2>
+            <span class="badge text-bg-primary rounded-pill">{{ groups|length }} group{{ groups|length|pluralize }}</span>
+        </div>
+
+        {% if groups %}
+        <div class="group-list">
+            {% for item in groups %}
+            <div class="group-item">
+                <div>
+                    <div class="group-name">{{ item.group.name }}</div>
+                    <div class="summary-row">
+                        <div class="summary-pill pill-members">
+                            <i class="bi bi-people-fill"></i>
+                            Members: {{ item.members_count }}
+                        </div>
+                        <div class="summary-pill pill-total">
+                            <i class="bi bi-currency-rupee"></i>
+                            Total Shared: ₹{{ item.total_amount }}
+                        </div>
+                        <div class="summary-pill pill-pending">
+                            <i class="bi bi-envelope-paper"></i>
+                            Pending: {{ item.pending_count|default:"0" }}
+                        </div>
+                        <div class="summary-pill pill-joined">
+                            <i class="bi bi-person-check-fill"></i>
+                            Joined: {{ item.joined_count|default:"0" }}
+                        </div>
+                        {% if item.is_owner %}
+                        <div class="summary-pill pill-role-owner">
+                            <i class="bi bi-shield-check"></i>
+                            Owner
+                        </div>
+                        {% else %}
+                        <div class="summary-pill pill-role-member">
+                            <i class="bi bi-person"></i>
+                            Member
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="action-group">
+                    <a href="{% url 'group_detail' item.group.id %}" class="action-btn view-btn" title="View Group">
+                        <i class="bi bi-eye"></i>
+                    </a>
+
+                    {% if item.can_edit %}
+                    <a href="{% url 'edit_group' item.group.id %}" class="action-btn edit-btn" title="Edit Group">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+                    {% endif %}
+
+                    {% if item.can_delete %}
+                    <form method="POST" action="{% url 'delete_group' item.group.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn delete-btn" onclick="return confirm('Delete this group?');">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-collection fs-2"></i>
+            <h5 class="mt-3 fw-bold">No groups created yet</h5>
+            <div class="mt-2">Click Start New Group to create your first group.</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
 </body>
 </html>

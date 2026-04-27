@@ -777,17 +777,20 @@ class GroupListCreateView(LoginRequiredMixin, TemplateView):
         group_data = []
 
         for group in groups:
-            members_count = GroupMember.objects.filter(group=group).count()
-            total_amount = SplitExpense.objects.filter(group=group).aggregate(total=Sum("total_amount"))["total"] or Decimal("0.00")
-            joined_count = GroupMember.objects.filter(group=group, invite_status=GroupMember.STATUS_JOINED).count()
-            pending_count = GroupMember.objects.filter(group=group, invite_status=GroupMember.STATUS_PENDING).count()
-
             group_data.append({
                 "group": group,
-                "members_count": members_count,
-                "total_amount": total_amount,
-                "joined_count": joined_count,
-                "pending_count": pending_count,
+                "members_count": GroupMember.objects.filter(group=group).count(),
+                "total_amount": SplitExpense.objects.filter(group=group).aggregate(
+                    total=Sum("total_amount")
+                )["total"] or Decimal("0.00"),
+                "joined_count": GroupMember.objects.filter(
+                    group=group,
+                    invite_status=GroupMember.STATUS_JOINED
+                ).count(),
+                "pending_count": GroupMember.objects.filter(
+                    group=group,
+                    invite_status=GroupMember.STATUS_PENDING
+                ).count(),
                 "is_owner": group.is_owner(self.request.user),
                 "can_edit": group.can_edit_group(self.request.user),
                 "can_delete": group.can_delete_group(self.request.user),
@@ -796,35 +799,65 @@ class GroupListCreateView(LoginRequiredMixin, TemplateView):
         context.update({
             "groups": group_data,
             "form": kwargs.get("form", GroupForm(user=self.request.user)),
+            "friend_form": kwargs.get("friend_form", FriendForm(user=self.request.user)),
+            "friends": Friend.objects.filter(user=self.request.user).order_by("name"),
             "friends_count": Friend.objects.filter(user=self.request.user).count(),
         })
         return context
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
-        form = GroupForm(request.POST, user=request.user)
-        if form.is_valid():
-            try:
-                group = Group.objects.create(
-                    user=request.user,
-                    name=form.cleaned_data["name"]
-                )
 
-                _sync_group_members(
-                    group=group,
-                    selected_members=form.cleaned_data["members"],
-                    request=request,
-                )
+        # Add friend from Groups page
+        if "add_friend" in request.POST:
+            friend_form = FriendForm(request.POST, user=request.user)
 
-                messages.success(request, "Group created successfully.")
-                return redirect("group_detail", group_id=group.id)
-            except Exception as exc:
-                transaction.set_rollback(True)
-                form.add_error(None, f"Unable to create group or send invite: {exc}")
+            if friend_form.is_valid():
+                friend = friend_form.save(commit=False)
+                friend.user = request.user
 
-        context = self.get_context_data(form=form)
-        return self.render_to_response(context)
+                existing_user = User.objects.filter(
+                    email__iexact=friend.email
+                ).first()
 
+                if existing_user:
+                    friend.linked_user = existing_user
+
+                friend.save()
+                messages.success(request, "Friend added successfully.")
+                return redirect("groups_list")
+
+            context = self.get_context_data(friend_form=friend_form)
+            return self.render_to_response(context)
+
+        # Create group from Groups page
+        if "create_group" in request.POST:
+            form = GroupForm(request.POST, user=request.user)
+
+            if form.is_valid():
+                try:
+                    group = Group.objects.create(
+                        user=request.user,
+                        name=form.cleaned_data["name"]
+                    )
+
+                    _sync_group_members(
+                        group=group,
+                        selected_members=form.cleaned_data["members"],
+                        request=request,
+                    )
+
+                    messages.success(request, "Group created successfully.")
+                    return redirect("group_detail", group_id=group.id)
+
+                except Exception as exc:
+                    transaction.set_rollback(True)
+                    form.add_error(None, f"Unable to create group or send invite: {exc}")
+
+            context = self.get_context_data(form=form)
+            return self.render_to_response(context)
+
+        return redirect("groups_list")
 
 class GroupUpdateView(LoginRequiredMixin, TemplateView):
     template_name = "groups.html"
@@ -1424,3 +1457,188 @@ Expense Tracker
         return redirect("login")
 
     return render(request, "forgot_password.html")
+
+
+class GroupCreateStepView(LoginRequiredMixin, TemplateView):
+    template_name = "group_create_step.html"
+    login_url = reverse_lazy("login")
+
+    def post(self, request, *args, **kwargs):
+        name = request.POST.get("name", "").strip()
+        group_type = request.POST.get("group_type", "other")
+
+        if not name:
+            return render(request, self.template_name, {
+                "error": "Please enter group name.",
+                "selected_type": group_type,
+            })
+
+        group = Group.objects.create(
+            user=request.user,
+            name=name,
+            group_type=group_type,
+        )
+
+        return redirect("group_add_members", group_id=group.id)
+    
+class GroupAddMembersView(LoginRequiredMixin, TemplateView):
+    template_name = "group_add_members.html"
+    login_url = reverse_lazy("login")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        group = get_group_for_user_or_404(
+            self.request.user,
+            self.kwargs["group_id"]
+        )
+
+        selected_ids = self.request.session.get(
+            f"group_{group.id}_selected_members",
+            []
+        )
+
+        context.update({
+            "group": group,
+            "friends": Friend.objects.filter(user=self.request.user).order_by("name"),
+            "selected_ids": selected_ids,
+        })
+        return context
+
+    def post(self, request, *args, **kwargs):
+        group = get_group_for_user_or_404(
+            request.user,
+            kwargs["group_id"]
+        )
+
+        selected_ids = request.POST.getlist("members")
+
+        request.session[f"group_{group.id}_selected_members"] = selected_ids
+        request.session.modified = True
+
+        return redirect("group_review_members", group_id=group.id)
+
+class GroupAddFriendView(LoginRequiredMixin, TemplateView):
+    template_name = "group_add_friend.html"
+    login_url = reverse_lazy("login")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["group"] = get_group_for_user_or_404(
+            self.request.user,
+            self.kwargs["group_id"]
+        )
+        return context
+
+    def post(self, request, *args, **kwargs):
+        group = get_group_for_user_or_404(request.user, kwargs["group_id"])
+
+        name = request.POST.get("name", "").strip()
+        email = request.POST.get("email", "").strip().lower()
+
+        if not name or not email:
+            return render(request, self.template_name, {
+                "group": group,
+                "error": "Name and Gmail are required."
+            })
+
+        if not email.endswith("@gmail.com"):
+            return render(request, self.template_name, {
+                "group": group,
+                "error": "Only Gmail addresses are allowed."
+            })
+
+        friend, created = Friend.objects.get_or_create(
+            user=request.user,
+            email=email,
+            defaults={"name": name}
+        )
+
+        if not created and friend.name != name:
+            friend.name = name
+            friend.save(update_fields=["name"])
+
+        existing_user = User.objects.filter(email__iexact=email).first()
+        if existing_user:
+            friend.linked_user = existing_user
+            friend.save(update_fields=["linked_user"])
+
+        selected_key = f"group_{group.id}_selected_members"
+        selected_ids = request.session.get(selected_key, [])
+
+        friend_id = str(friend.id)
+        if friend_id not in selected_ids:
+            selected_ids.append(friend_id)
+
+        request.session[selected_key] = selected_ids
+
+        return redirect("group_add_members", group_id=group.id)
+    
+class GroupReviewMembersView(LoginRequiredMixin, TemplateView):
+    template_name = "group_review_members.html"
+    login_url = reverse_lazy("login")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        group = get_group_for_user_or_404(self.request.user, self.kwargs["group_id"])
+
+        selected_ids = self.request.session.get(
+            f"group_{group.id}_selected_members",
+            []
+        )
+
+        selected_ids = [int(member_id) for member_id in selected_ids]
+
+        selected_friends = Friend.objects.filter(
+            user=self.request.user,
+            id__in=selected_ids
+        ).order_by("name")
+
+        context.update({
+            "group": group,
+            "selected_friends": selected_friends,
+        })
+        return context
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        group = get_group_for_user_or_404(request.user, kwargs["group_id"])
+
+        selected_ids = request.session.get(
+            f"group_{group.id}_selected_members",
+            []
+        )
+
+        selected_ids = [int(member_id) for member_id in selected_ids]
+
+        print("SESSION IDS:", selected_ids)
+
+        if not selected_ids:
+            messages.error(request, "Please select at least one member.")
+            return redirect("group_add_members", group_id=group.id)
+
+        selected_members = Friend.objects.filter(
+            user=request.user,
+            id__in=selected_ids
+        )
+
+        print("DB FRIENDS:", list(selected_members.values_list("id", "name", "email")))
+
+        if not selected_members.exists():
+            messages.error(request, "Selected members were not found.")
+            return redirect("group_add_members", group_id=group.id)
+
+        _sync_group_members(
+            group=group,
+            selected_members=selected_members,
+            request=request,
+        )
+
+        group.activate()
+
+        request.session.pop(f"group_{group.id}_selected_members", None)
+
+        messages.success(request, "Group created successfully. Invite emails sent.")
+
+        return redirect("group_detail", group_id=group.id)
+    

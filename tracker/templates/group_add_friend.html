@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Friend</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body{
+            margin:0;
+            background:#fff;
+            font-family:Poppins, Arial, sans-serif;
+            color:#30343a;
+        }
+
+        .mobile-shell{
+            max-width:520px;
+            margin:0 auto;
+            min-height:100vh;
+            position:relative;
+            padding-bottom:120px;
+        }
+
+        .top-bar{
+            height:80px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 24px;
+        }
+
+        .left-area{
+            display:flex;
+            align-items:center;
+            gap:22px;
+        }
+
+        .icon-link,
+        .submit-icon{
+            border:none;
+            background:none;
+            color:#30343a;
+            font-size:30px;
+            text-decoration:none;
+        }
+
+        .title{
+            font-size:30px;
+            font-weight:400;
+        }
+
+        .form-area{
+            padding:38px 22px 0;
+        }
+
+        .field-wrap{
+            position:relative;
+            margin-bottom:34px;
+        }
+
+        .field-label{
+            position:absolute;
+            top:-14px;
+            left:22px;
+            background:#fff;
+            padding:0 8px;
+            font-size:18px;
+            color:#45494f;
+        }
+
+        .input-box{
+            width:100%;
+            border:2px solid #3d4146;
+            border-radius:18px;
+            height:70px;
+            padding:12px 20px;
+            font-size:22px;
+            outline:none;
+            box-sizing:border-box;
+        }
+
+        .email-box{
+            border:1.5px solid #555;
+        }
+
+        .hint{
+            color:#788088;
+            text-align:center;
+            font-size:22px;
+            line-height:1.4;
+            padding:0 18px;
+            margin-top:30px;
+        }
+
+        .error{
+            background:#fff1f2;
+            color:#be123c;
+            border:1px solid #fecdd3;
+            border-radius:14px;
+            padding:14px;
+            margin-bottom:24px;
+        }
+
+        .bottom-bar{
+            position:fixed;
+            left:50%;
+            bottom:0;
+            transform:translateX(-50%);
+            width:min(520px,100%);
+            background:#f1f2f7;
+            padding:18px 20px 24px;
+            box-sizing:border-box;
+        }
+
+        .next-btn{
+            width:100%;
+            border:none;
+            background:#00916e;
+            color:#fff;
+            border-radius:999px;
+            padding:18px;
+            font-size:22px;
+            font-weight:600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="mobile-shell">
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="top-bar">
+            <div class="left-area">
+                <a href="{% url 'group_add_members' group.id %}" class="icon-link">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <div class="title">Add friend</div>
+            </div>
+
+            <button type="submit" class="submit-icon">
+                <i class="bi bi-check-lg"></i>
+            </button>
+        </div>
+
+        <div class="form-area">
+            {% if error %}
+                <div class="error">{{ error }}</div>
+            {% endif %}
+
+            <div class="field-wrap">
+                <label class="field-label">Name</label>
+                <input type="text" name="name" class="input-box" required autofocus>
+            </div>
+
+            <div class="field-wrap">
+                <label class="field-label">Gmail address</label>
+                <input type="email" name="email" class="input-box email-box" placeholder="friend@gmail.com" required>
+            </div>
+
+            <div class="hint">
+                Don't worry, nothing sends just yet. You will review before adding members.
+            </div>
+        </div>
+
+        <div class="bottom-bar">
+            <button type="submit" class="next-btn">Save Contact</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
