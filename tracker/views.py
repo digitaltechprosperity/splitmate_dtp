@@ -108,19 +108,14 @@ def _build_equal_shares(expense):
     share = _round_money(total / member_count)
 
     created_shares = []
-    total_created = Decimal("0.00")
 
-    for index, member in enumerate(participants):
-        amount = share
-        if index == member_count - 1:
-            amount = total - total_created
-        
+    for member in participants:
         if member == expense.paid_by:
             created_shares.append(
                 SplitShare(
                     expense=expense,
                     friend=member,
-                    share_amount=0,
+                    share_amount=share,   # ✅ FIXED
                     is_settled=True
                 )
             )
@@ -129,10 +124,9 @@ def _build_equal_shares(expense):
                 SplitShare(
                     expense=expense,
                     friend=member,
-                    share_amount=amount
+                    share_amount=share    # ✅ FIXED
                 )
             )
-            total_created += amount
 
     SplitShare.objects.bulk_create(created_shares)
 
