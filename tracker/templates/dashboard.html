@@ -211,40 +211,48 @@
             margin-bottom:24px;
         }
 
-        .stat-card{
-            border:none;
-            border-radius:24px;
-            color:#fff;
-            padding:22px 24px;
-            min-height:132px;
-            box-shadow:var(--shadow);
-            position:relative;
-            overflow:hidden;
+        .stat-card {
+            border: none;
+            border-radius: 26px;
+            color: #fff;
+            padding: 24px;
+            min-height: 140px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
         }
 
-        .stat-card::after{
-            content:"";
-            position:absolute;
-            right:-30px;
-            top:-30px;
-            width:110px;
-            height:110px;
-            border-radius:50%;
-            background:rgba(255,255,255,.10);
+        .stat-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
         }
 
-        .stat-card h6{
-            font-size:15px;
-            font-weight:500;
-            margin-bottom:12px;
-            opacity:.95;
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            right: -30px;
+            top: -30px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.12);
         }
 
-        .stat-card h3{
-            font-size:34px;
-            font-weight:700;
-            margin:0;
-            letter-spacing:-0.5px;
+        .stat-card h6 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            opacity: .9;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-card h3 {
+            font-size: 38px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -1px;
         }
 
         .bg-primary-grad{
