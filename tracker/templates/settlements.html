@@ -511,9 +511,12 @@
 
         .logo-text span {
             background: linear-gradient(135deg, #4f46e5, #9333ea);
-            -webkit-background-clip: text;
+
+            -webkit-background-clip: text;  /* for Chrome/Safari */
+            background-clip: text;          /* ✅ add this */
+
             -webkit-text-fill-color: transparent;
-        }
+}
     </style>
 </head>
 <body>
@@ -608,7 +611,7 @@
             {% for item in settlements %}
             <div class="settlement-card">
                 <div class="settlement-left">
-                    <div class="settlement-avatar">{{ item.debtor|first|upper }}</div>
+                    <div class="settlement-avatar">{{ item.debtor|default:"?"|first|upper }}</div>
                     <div>
                         <div class="settlement-name">{{ item.debtor }}</div>
                         <div class="settlement-meta">
