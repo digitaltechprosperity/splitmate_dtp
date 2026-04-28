@@ -655,12 +655,17 @@
         </a>
 
         <div class="d-flex align-items-center gap-4 ms-auto flex-wrap">
-            <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">Dashboard</a>
-            <a href="{% url 'groups_list' %}" class="nav-link-custom {% if '/groups/' in request.path %}active-link{% endif %}">Groups</a>
-            <a href="{% url 'friends_list' %}" class="nav-link-custom {% if '/friends/' in request.path %}active-link{% endif %}">Friends</a>
-            <a href="{% url 'split_expense' %}" class="nav-link-custom {% if '/split-expense/' in request.path %}active-link{% endif %}">Split Expense</a>
-            <a href="{% url 'settlements' %}" class="nav-link-custom {% if '/settlements/' in request.path %}active-link{% endif %}">Settlements</a>
+           <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">
+    Dashboard
+</a>
 
+<a href="{% url 'groups_list' %}" class="nav-link-custom {% if '/groups/' in request.path %}active-link{% endif %}">
+    Groups
+</a>
+
+<a href="{% url 'settlements' %}" class="nav-link-custom {% if request.path == '/settlements/' %}active-link{% endif %}">
+    Settlements
+</a>
             <div class="user-badge">
                 <div class="user-avatar">{{ request.user.first_name|default:request.user.username|first|upper }}</div>
                 <p class="user-name mb-0">{{ request.user.first_name|default:request.user.username }}

@@ -933,11 +933,17 @@
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'dashboard' %}">Expense Tracker</a>
         <div class="d-flex align-items-center gap-4 ms-auto flex-wrap">
-            <a href="{% url 'dashboard' %}" class="nav-link-custom">Dashboard</a>
-            <a href="{% url 'groups_list' %}" class="nav-link-custom active-link">Groups</a>
-            <a href="{% url 'friends_list' %}" class="nav-link-custom">Friends</a>
-            <a href="{% url 'split_expense' %}" class="nav-link-custom">Split Expense</a>
-            <a href="{% url 'settlements' %}" class="nav-link-custom">Settlements</a>
+            <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">
+    Dashboard
+</a>
+
+<a href="{% url 'groups_list' %}" class="nav-link-custom {% if '/groups/' in request.path %}active-link{% endif %}">
+    Groups
+</a>
+
+<a href="{% url 'settlements' %}" class="nav-link-custom {% if request.path == '/settlements/' %}active-link{% endif %}">
+    Settlements
+</a>
 
             <div class="user-badge">
                 <div class="user-avatar">{{ request.user.username|first|upper }}</div>

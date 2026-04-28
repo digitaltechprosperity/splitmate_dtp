@@ -393,11 +393,17 @@
         <a class="navbar-brand" href="{% url 'dashboard' %}">Expense Tracker</a>
 
         <div class="d-flex align-items-center gap-4 ms-auto flex-wrap">
-            <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">Dashboard</a>
-            <a href="{% url 'groups_list' %}" class="nav-link-custom {% if '/groups/' in request.path %}active-link{% endif %}">Groups</a>
-            <a href="{% url 'friends_list' %}" class="nav-link-custom {% if '/friends/' in request.path %}active-link{% endif %}">Friends</a>
-            <a href="{% url 'split_expense' %}" class="nav-link-custom {% if '/split-expense/' in request.path %}active-link{% endif %}">Split Expense</a>
-            <a href="{% url 'settlements' %}" class="nav-link-custom {% if request.path == '/settlements/' %}active-link{% endif %}">Settlements</a>
+            <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">
+                Dashboard
+            </a>
+
+            <a href="{% url 'groups_list' %}" class="nav-link-custom {% if '/groups/' in request.path %}active-link{% endif %}">
+                Groups
+            </a>
+
+            <a href="{% url 'settlements' %}" class="nav-link-custom {% if request.path == '/settlements/' %}active-link{% endif %}">
+                Settlements
+            </a>
 
             <div class="user-badge">
                 <div class="user-avatar">
@@ -408,6 +414,7 @@
                     {{ request.user.first_name|default:request.user.username }}
                 </p>
             </div>
+
             <button type="button" class="logout-icon-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">
                 <i class="bi bi-box-arrow-right"></i>
             </button>
@@ -427,14 +434,14 @@
 
         <div class="top-chip">
             <i class="bi bi-receipt-cutoff"></i>
-            Total Records: {{ expenses|length }}
+            Total Records: {{ total_records }}
         </div>
     </div>
 
     <div class="stats-row">
         <div class="stat-card bg-primary-grad">
             <h6>Total Split Entries</h6>
-            <h3>{{ expenses|length }}</h3>
+            <h3>{{ total_records }}</h3>
         </div>
 
         <div class="stat-card bg-success-grad">
@@ -463,6 +470,7 @@
                                 <li>{{ error }}</li>
                             {% endfor %}
                         {% endfor %}
+
                         {% for error in form.non_field_errors %}
                             <li>{{ error }}</li>
                         {% endfor %}
@@ -487,7 +495,7 @@
                 <div class="col-md-6">
                     <label class="form-label custom-label">Paid By</label>
                     <input type="text" class="form-control"
-                value="{{ request.user.first_name|default:request.user.username }}" readonly>
+                           value="{{ request.user.first_name|default:request.user.username }}" readonly>
                     <div class="helper-text">Automatically set to the logged in user.</div>
                 </div>
 
@@ -563,7 +571,7 @@
         <div class="card-box p-4 p-md-5">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="history-title">Split Expense History</h2>
-                <div class="top-chip">{{ expenses|length }} record{{ expenses|length|pluralize }}</div>
+                <div class="top-chip">{{ total_records }} record{{ total_records|pluralize }}</div>
             </div>
 
             {% if expenses %}
@@ -574,7 +582,14 @@
                                 <div class="expense-title">{{ item.expense.title }}</div>
                                 <div class="expense-meta">
                                     Group: <strong>{{ item.expense.group.name }}</strong> |
-                                    Paid by: <strong>{% if item.expense.created_by == request.user %}You{% else %}{{ item.expense.paid_by.name }}{% endif %}</strong> |
+                                    Paid by:
+                                    <strong>
+                                        {% if item.expense.created_by == request.user %}
+                                            You
+                                        {% else %}
+                                            {{ item.expense.paid_by.name }}
+                                        {% endif %}
+                                    </strong> |
                                     Total: <strong>₹{{ item.expense.total_amount }}</strong> |
                                     Members: <strong>{{ item.member_count }}</strong> |
                                     Per Person: <strong>{{ item.per_person }}</strong>
@@ -657,6 +672,29 @@
                         {% endif %}
                     </div>
                 {% endfor %}
+
+                {% if page_obj.has_other_pages %}
+                    <div class="d-flex justify-content-center align-items-center gap-3 mt-4">
+                        {% if page_obj.has_previous %}
+                            <a class="secondary-action-btn text-decoration-none"
+                               href="?page={{ page_obj.previous_page_number }}{% if request.GET.group %}&group={{ request.GET.group }}{% endif %}">
+                                ← Previous
+                            </a>
+                        {% endif %}
+
+                        <span class="top-chip">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+
+                        {% if page_obj.has_next %}
+                            <a class="secondary-action-btn text-decoration-none"
+                               href="?page={{ page_obj.next_page_number }}{% if request.GET.group %}&group={{ request.GET.group }}{% endif %}">
+                                Next →
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
             {% else %}
                 <div class="empty-state">
                     <i class="bi bi-receipt"></i>

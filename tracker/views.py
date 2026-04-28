@@ -1,7 +1,7 @@
 import json
 from collections import defaultdict
 from decimal import Decimal, ROUND_HALF_UP
-
+from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
@@ -1140,15 +1140,29 @@ class SplitExpenseListCreateView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         accessible_groups = get_accessible_groups(self.request.user)
-        expenses = SplitExpense.objects.filter(group__in=accessible_groups).order_by("-created_at").prefetch_related(
+
+        selected_group = None
+        group_id = self.request.GET.get("group")
+
+        if group_id:
+            selected_group = get_group_for_user_or_404(self.request.user, group_id)
+
+        expenses_qs = SplitExpense.objects.filter(
+            group__in=accessible_groups
+        ).order_by("-created_at").prefetch_related(
             "shares__friend",
             "participant_rows__friend"
         )
 
+        paginator = Paginator(expenses_qs, 3)
+        page_number = self.request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
         expense_data = []
-        for expense in expenses:
+        for expense in page_obj:
             shares = list(expense.shares.all())
             per_person = shares[0].share_amount if shares and expense.split_type == SplitExpense.SPLIT_TYPE_EQUAL else "-"
+
             expense_data.append({
                 "expense": expense,
                 "per_person": per_person,
@@ -1157,14 +1171,26 @@ class SplitExpenseListCreateView(LoginRequiredMixin, TemplateView):
                 "can_delete": expense.can_delete(self.request.user),
             })
 
+        if "form" in kwargs:
+            form = kwargs["form"]
+        else:
+            form = SplitExpenseForm(
+                user=self.request.user,
+                group=selected_group,
+                initial={"group": selected_group} if selected_group else None
+            )
+
         context.update({
-            "form": kwargs.get("form", SplitExpenseForm(user=self.request.user)),
+            "form": form,
             "expenses": expense_data,
+            "page_obj": page_obj,
+            "total_records": expenses_qs.count(),
             "editing": False,
             "custom_share_json": "[]",
             "percentage_share_json": "[]",
             "selected_participant_ids": "[]",
         })
+
         return context
 
     @transaction.atomic
@@ -1505,10 +1531,21 @@ class GroupAddMembersView(LoginRequiredMixin, TemplateView):
             self.kwargs["group_id"]
         )
 
-        selected_ids = self.request.session.get(
-            f"group_{group.id}_selected_members",
-            []
-        )
+        session_key = f"group_{group.id}_selected_members"
+
+        selected_ids = self.request.session.get(session_key)
+
+        # First time opening Add Members page:
+        # preselect existing group members so they are not removed.
+        if selected_ids is None:
+            selected_ids = list(
+                GroupMember.objects.filter(group=group)
+                .exclude(role=GroupMember.ROLE_OWNER)
+                .values_list("friend_id", flat=True)
+            )
+            selected_ids = [str(friend_id) for friend_id in selected_ids]
+            self.request.session[session_key] = selected_ids
+            self.request.session.modified = True
 
         context.update({
             "group": group,
@@ -1523,9 +1560,21 @@ class GroupAddMembersView(LoginRequiredMixin, TemplateView):
             kwargs["group_id"]
         )
 
-        selected_ids = request.POST.getlist("members")
+        session_key = f"group_{group.id}_selected_members"
 
-        request.session[f"group_{group.id}_selected_members"] = selected_ids
+        existing_ids = list(
+            GroupMember.objects.filter(group=group)
+            .exclude(role=GroupMember.ROLE_OWNER)
+            .values_list("friend_id", flat=True)
+        )
+        existing_ids = [str(friend_id) for friend_id in existing_ids]
+
+        posted_ids = request.POST.getlist("members")
+
+        # Keep old members + add newly selected members
+        selected_ids = list(set(existing_ids + posted_ids))
+
+        request.session[session_key] = selected_ids
         request.session.modified = True
 
         return redirect("group_review_members", group_id=group.id)
