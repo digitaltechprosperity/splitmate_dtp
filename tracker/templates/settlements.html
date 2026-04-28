@@ -568,43 +568,11 @@
         </div>
     </div>
 
-    <div class="stats-row">
-        <div class="stat-card bg-primary-grad">
-            <h6>Total Records</h6>
-            <h3>{{ settlements|length }}</h3>
-        </div>
-        <div class="stat-card bg-success-grad">
-            <h6>Status</h6>
-            <h3>Active</h3>
-        </div>
-        <div class="stat-card bg-violet-grad">
-            <h6>Overview</h6>
-            <h3>Live</h3>
-        </div>
-    </div>
 
     <div class="card-box p-4 p-md-5">
         <div class="section-title">Settlement Analysis</div>
         <div class="section-subtitle">A clear and colorful summary of debtor-creditor relationships across your groups.</div>
-
-        <div class="analysis-bar">
-            <div class="analysis-chip analysis-blue">
-                <i class="bi bi-arrow-left-right"></i>
-                Balance Flow
-            </div>
-            <div class="analysis-chip analysis-green">
-                <i class="bi bi-cash-coin"></i>
-                Due Amount
-            </div>
-            <div class="analysis-chip analysis-orange">
-                <i class="bi bi-people-fill"></i>
-                Member Tracking
-            </div>
-            <div class="analysis-chip analysis-violet">
-                <i class="bi bi-graph-up"></i>
-                Financial Insight
-            </div>
-        </div>
+        
 
         {% if settlements %}
         <div class="settlement-list">

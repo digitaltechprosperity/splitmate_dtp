@@ -682,16 +682,14 @@
 <div class="page-wrap">
     <div class="page-head">
         <div>
-            <h1 class="welcome-title">Welcome, {{ request.user.first_name|default:request.user.username }}</h1>
-            <div class="welcome-subtitle">Monitor your spending, visualize trends, and manage liabilities with a cleaner analytics-focused dashboard.</div>
+            <h1 class="welcome-title">
+                Welcome, {{ request.user.first_name|default:request.user.username }}
+            </h1>
+            <div class="welcome-subtitle">
+                Monitor your spending, visualize trends, and manage liabilities with a cleaner analytics-focused dashboard.
+            </div>
         </div>
-
-        <div class="head-chip">
-            <i class="bi bi-bar-chart-line"></i>
-            Personal Finance Overview
-        </div>
-    </div>
-
+    </div>     
     <div class="stats-row">
         <div class="stat-card bg-primary-grad position-relative">
             <i class="bi bi-wallet stat-icon"></i>
@@ -720,24 +718,6 @@
             <div class="section-title">Monthly Expense Analysis</div>
             <div class="section-subtitle">A colorful trend view of your monthly personal expenses.</div>
 
-            <div class="analysis-bar">
-                <div class="analysis-chip analysis-blue">
-                    <i class="bi bi-graph-up-arrow"></i>
-                    Monthly Trend
-                </div>
-                <div class="analysis-chip analysis-green">
-                    <i class="bi bi-wallet2"></i>
-                    Spending Insight
-                </div>
-                <div class="analysis-chip analysis-orange">
-                    <i class="bi bi-lightning-charge"></i>
-                    Quick Overview
-                </div>
-                <div class="analysis-chip analysis-violet">
-                    <i class="bi bi-pie-chart"></i>
-                    Visual Analytics
-                </div>
-            </div>
 
             <div class="chart-card-shell">
                 <canvas id="expenseChart" height="150"></canvas>
