@@ -1444,8 +1444,6 @@ from django.conf import settings
 from django.contrib import messages
 
 from .models import PasswordSetupToken
-
-
 def forgot_password(request):
     if request.method == "POST":
         identifier = request.POST.get("identifier", "").strip().lower()
@@ -1463,9 +1461,7 @@ def forgot_password(request):
                 reverse("set_password", kwargs={"token": token.token})
             )
 
-            send_mail(
-                subject="Reset your Expense Tracker password",
-                message=f"""
+            message = f"""
 Hello {user.username},
 
 We received a request to reset your password.
@@ -1480,17 +1476,23 @@ If you did not request this, ignore this email.
 
 Thanks,
 Expense Tracker
-""",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                fail_silently=False,
-            )
+"""
+
+            try:
+                send_mail(
+                    subject="Reset your Expense Tracker password",
+                    message=message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[user.email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                print("EMAIL SEND ERROR:", str(e))
 
         messages.success(
             request,
             "If an account exists with this username or Gmail, a password reset link has been sent.",
             extra_tags="auth"
-
         )
         return redirect("login")
 
