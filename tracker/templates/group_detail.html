@@ -94,10 +94,28 @@
             align-items:center;
             gap:12px;
             background:#f8fbff;
-            border:1px solid var(--line);
-            padding:8px 14px 8px 8px;
+            border:2px solid transparent;
+            padding:8px 16px 8px 8px;
             border-radius:999px;
-            box-shadow:0 6px 16px rgba(15,23,42,.04);
+            transition:all 0.25s ease;
+            text-decoration:none;
+        }
+
+        .user-badge:hover{
+            border:2px solid #2563eb;
+            box-shadow:
+                0 0 0 3px rgba(37,99,235,0.25),
+                0 4px 12px rgba(37,99,235,0.15);
+            background:#f1f6ff;
+            transform:translateY(-1px);
+        }
+
+        .user-badge.active-profile{
+            border:2px solid #2563eb;
+            box-shadow:
+                0 0 0 3px rgba(37,99,235,0.35),
+                0 6px 16px rgba(37,99,235,0.2);
+            background:#eef4ff;
         }
 
         .user-avatar{
@@ -111,7 +129,19 @@
             justify-content:center;
             font-weight:700;
             font-size:15px;
+            overflow:hidden;
+            flex-shrink:0;
         }
+
+        .user-avatar img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+        }
+        
+
+        
 
         .user-name{
             font-size:14px;
@@ -120,25 +150,7 @@
             margin:0;
         }
 
-        .logout-icon-btn{
-            width:46px;
-            height:46px;
-            border-radius:50%;
-            border:none;
-            background:var(--danger-soft);
-            color:var(--danger);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:19px;
-            transition:.25s ease;
-        }
 
-        .logout-icon-btn:hover{
-            background:var(--danger);
-            color:#fff;
-            transform:translateY(-1px);
-        }
 
         .page-wrap{
             width:min(1140px, 92%);
@@ -573,14 +585,130 @@
             .expense-top{ flex-direction:column; align-items:flex-start; }
             .stats-row{ grid-template-columns:1fr; }
         }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .logo-text span {
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .edit-group-form {
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .group-edit-input {
+            border: none;
+            outline: none;
+            font-size: 32px;   /* matches your title size */
+            font-weight: 700;
+            background: transparent;
+            padding: 2px 4px;
+            width: 220px;
+            transition: all 0.2s ease;
+        }
+
+        .group-edit-input:focus {
+            outline: none;
+        }
+
+        /* icon buttons */
+        .icon-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .save-btn i {
+            color: #16a34a;
+            font-size: 18px;
+        }
+
+        .cancel-btn i {
+            color: #6b7280;
+            font-size: 18px;
+        }
+
+        .icon-btn:hover {
+            background: rgba(0,0,0,0.05);
+        }
+        .edit-icon-btn {
+            border: none;
+            background: #f1f5f9;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .edit-icon-btn i {
+            font-size: 16px;
+        }
+
+        .edit-icon-btn:hover {
+            background: #2563eb;
+            color: white;
+        }
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            transition: all 0.25s ease;
+            border: 2px solid transparent;
+        }
+
+        .user-badge:hover {
+            border: 2px solid #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+            background: rgba(37, 99, 235, 0.05);
+        }
+        .user-badge,
+        .user-badge * {
+            text-decoration: none !important;
+        }
+        
     </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'dashboard' %}">Expense Tracker</a>
-
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'dashboard' %}">
+            <div class="logo-icon">S</div>
+            <span class="logo-text">
+                Split<span>Mate</span>
+            </span>
+        </a>
         <div class="d-flex align-items-center gap-4 ms-auto flex-wrap">
             <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">
     Dashboard
@@ -593,17 +721,21 @@
 <a href="{% url 'settlements' %}" class="nav-link-custom {% if request.path == '/settlements/' %}active-link{% endif %}">
     Settlements
 </a>
-            <div class="user-badge">
-                <div class="user-avatar">{{ request.user.username|first|upper }}</div>
-                <p class="user-name mb-0">{{ request.user.username }}</p>
+            <a href="{% url 'profile' %}"
+        class="user-badge text-decoration-none {% if '/profile' in request.path %}active-profile{% endif %}">
+
+            <div class="user-avatar">
+                {% if request.user.profile.photo %}
+                    <img src="{{ request.user.profile.photo.url }}" alt="Profile">
+                {% else %}
+                    {{ request.user.first_name|default:request.user.username|first|upper }}
+                {% endif %}
             </div>
 
-            <form method="POST" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="logout-icon-btn">
-                    <i class="bi bi-box-arrow-right"></i>
-                </button>
-            </form>
+            <p class="user-name mb-0">
+                {{ request.user.first_name|default:request.user.username }}
+            </p>
+        </a>
         </div>
     </div>
 </nav>
@@ -611,7 +743,37 @@
 <div class="page-wrap">
     <div class="page-head">
         <div>
-            <h1 class="page-title">{{ group.name }}</h1>
+            <div class="d-flex align-items-center gap-2">
+
+                <h1 id="groupNameText" class="page-title mb-0">
+                    {{ group.name }}
+                </h1>
+
+                <button onclick="enableEdit()" class="edit-icon-btn">
+                    <i class="bi bi-pencil"></i>
+                </button>
+            
+                <form id="editForm" method="POST" action="{% url 'edit_group' group.id %}" class="edit-group-form">
+                    {% csrf_token %}
+                    
+                    <input 
+                        type="text" 
+                        name="name" 
+                        id="groupNameInput" 
+                        value="{{ group.name }}" 
+                        class="group-edit-input"
+                    >
+
+                    <button type="submit" class="icon-btn save-btn">
+                        <i class="bi bi-check"></i>
+                    </button>
+
+                    <button type="button" onclick="cancelEdit()" class="icon-btn cancel-btn">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </form>
+
+            </div>
             <div class="page-subtitle">Track shared expenses, invite progress, and payment settlements from one place.</div>
         </div>
 
@@ -814,5 +976,36 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function enableEdit() {
+    document.getElementById("groupNameText").style.display = "none";
+    document.getElementById("editForm").style.display = "flex";
+
+    const input = document.getElementById("groupNameInput");
+    input.focus();                 
+    input.select();                
+}
+
+function cancelEdit() {
+    document.getElementById("groupNameText").style.display = "block";
+    document.getElementById("editForm").style.display = "none";
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("groupNameInput");
+
+    input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            document.getElementById("editForm").submit();
+        }
+
+        if (e.key === "Escape") {
+            cancelEdit();
+        }
+    });
+});
+</script>
 </body>
 </html>

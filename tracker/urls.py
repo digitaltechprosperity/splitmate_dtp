@@ -68,6 +68,7 @@ from django.urls import path
 
 from .views import (
     HomeView,
+    ProfileView,
     RegisterView,
     CustomLoginView,
     CustomLogoutView,
@@ -95,6 +96,7 @@ from .views import (
     MarkShareSettledView,
 
     SettlementsView,
+     ProfileView,
 
     send_otp,
     verify_otp,
@@ -151,4 +153,8 @@ urlpatterns = [
     # Password
     path("forgot-password/", forgot_password, name="forgot_password"),
     path("set-password/<uuid:token>/", set_password, name="set_password"),
+
+    # tracker/urls.py
+
+    path("profile/", ProfileView.as_view(), name="profile"),
 ]

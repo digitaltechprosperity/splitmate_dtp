@@ -152,3 +152,9 @@ TWILIO_PHONE_NUMBER = "+12184268634"
 
 print("DATABASE ENGINE:", DATABASES["default"]["ENGINE"])
 print("DATABASE NAME:", DATABASES["default"].get("NAME"))
+
+
+# settings.py
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")

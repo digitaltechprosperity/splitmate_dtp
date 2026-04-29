@@ -37,49 +37,103 @@
         }
 
         .nav-link-custom {
+            position: relative;
             color: #263247;
             font-weight: 500;
             text-decoration: none;
             padding: 8px 4px;
         }
-
-        .active-link {
+        .nav-link-custom.active-link {
             color: #2563eb !important;
             font-weight: 600;
-            border-bottom: 3px solid #2563eb;
         }
 
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #f8fbff;
-            border: 1px solid #e8edf5;
-            padding: 8px 14px 8px 8px;
-            border-radius: 999px;
+        
+        .nav-link-custom:not(.active-link):hover {
+            color: #2563eb;
         }
 
-        .user-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: linear-gradient(135deg,#2563eb,#7c3aed);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
+        
+        .nav-link-custom::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -6px;
+            width: 0%;
+            height: 3px;
+            background-color: #2563eb;
+            border-radius: 4px;
+            transition: width 0.25s ease;
+        }
+        .nav-link-custom.active-link::after {
+            width: 100%;
         }
 
-        .logout-icon-btn {
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            border: none;
-            background: #fff1f2;
-            color: #ef4444;
-            font-size: 19px;
+        .nav-link-custom:not(.active-link):hover::after {
+            width: 100%;
         }
+
+       .user-badge{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            background:#f8fbff;
+            border:2px solid transparent;
+            padding:8px 16px 8px 8px;
+            border-radius:999px;
+            transition:all 0.25s ease;
+            text-decoration:none !important;
+            color:#111827 !important;
+        }
+
+       
+
+        .user-badge:hover{
+            border:2px solid #2563eb;
+            box-shadow:
+                0 0 0 3px rgba(37,99,235,0.25),
+                0 4px 12px rgba(37,99,235,0.15);
+            background:#f1f6ff;
+            transform:translateY(-1px);
+        }
+
+        .user-badge.active-profile{
+            border:2px solid #2563eb;
+            box-shadow:
+                0 0 0 3px rgba(37,99,235,0.35),
+                0 6px 16px rgba(37,99,235,0.2);
+            background:#eef4ff;
+        }
+
+        .user-avatar{
+            width:38px;
+            height:38px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#2563eb,#7c3aed);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+            font-size:15px;
+            overflow:hidden;
+            flex-shrink:0;
+        }
+
+        .user-avatar img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+        }
+
+        .user-name{
+            font-size:14px;
+            font-weight:600;
+            color:#111827;
+            margin:0;
+        }
+
 
         .page-wrap {
             width: min(1140px, 92%);
@@ -383,6 +437,34 @@
                 grid-template-columns: 1fr;
             }
         }
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-text {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .logo-text span {
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+
+        
+        
     </style>
 </head>
 
@@ -390,14 +472,20 @@
 
 <nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'dashboard' %}">Expense Tracker</a>
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'dashboard' %}">
+            <div class="logo-icon">S</div>
+            <span class="logo-text">
+                Split<span>Mate</span>
+            </span>
+        </a>
+
 
         <div class="d-flex align-items-center gap-4 ms-auto flex-wrap">
             <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">
                 Dashboard
             </a>
 
-            <a href="{% url 'groups_list' %}" class="nav-link-custom {% if '/groups/' in request.path %}active-link{% endif %}">
+            <a href="{% url 'groups_list' %}" class="nav-link-custom {% if '/groups/' in request.path or '/split-expense/' in request.path %}active-link{% endif %}">
                 Groups
             </a>
 
@@ -405,19 +493,21 @@
                 Settlements
             </a>
 
-            <div class="user-badge">
-                <div class="user-avatar">
-                    {{ request.user.first_name|default:request.user.username|first|upper }}
-                </div>
+           <a href="{% url 'profile' %}"
+   class="user-badge text-decoration-none {% if '/profile' in request.path %}active-profile{% endif %}">
 
-                <p class="user-name mb-0">
-                    {{ request.user.first_name|default:request.user.username }}
-                </p>
-            </div>
+    <div class="user-avatar">
+        {% if request.user.profile.photo %}
+            <img src="{{ request.user.profile.photo.url }}" alt="Profile">
+        {% else %}
+            {{ request.user.first_name|default:request.user.username|first|upper }}
+        {% endif %}
+    </div>
 
-            <button type="button" class="logout-icon-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                <i class="bi bi-box-arrow-right"></i>
-            </button>
+    <p class="user-name mb-0">
+        {{ request.user.first_name|default:request.user.username }}
+    </p>
+</a>
         </div>
     </div>
 </nav>
@@ -437,23 +527,7 @@
             Total Records: {{ total_records }}
         </div>
     </div>
-
-    <div class="stats-row">
-        <div class="stat-card bg-primary-grad">
-            <h6>Total Split Entries</h6>
-            <h3>{{ total_records }}</h3>
-        </div>
-
-        <div class="stat-card bg-success-grad">
-            <h6>Mode</h6>
-            <h3>{% if editing %}Edit{% else %}Create{% endif %}</h3>
-        </div>
-
-        <div class="stat-card bg-warning-grad">
-            <h6>Split Types</h6>
-            <h3>Equal / Custom / %</h3>
-        </div>
-    </div>
+ 
 
     <div class="card-box p-4 p-md-5">
         <div class="section-title">{% if editing %}Update Expense Details{% else %}Add New Split Expense{% endif %}</div>
@@ -467,12 +541,12 @@
                     <ul>
                         {% for field in form %}
                             {% for error in field.errors %}
-                                <li>{{ error }}</li>
+                                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
                             {% endfor %}
                         {% endfor %}
 
                         {% for error in form.non_field_errors %}
-                            <li>{{ error }}</li>
+                            <li><strong>Form:</strong> {{ error }}</li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -481,7 +555,7 @@
 
         <form method="POST" id="split-expense-form">
             {% csrf_token %}
-            {{ form.paid_by }}
+           
             {{ form.custom_split_data }}
             {{ form.percentage_split_data }}
 
@@ -489,6 +563,8 @@
                 <div class="col-md-6">
                     <label class="form-label custom-label">Group</label>
                     {{ form.group }}
+
+                    
                     <div class="helper-text">Choose the group for this shared expense.</div>
                 </div>
 
@@ -762,6 +838,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function readJsonScript(id) {
         const el = document.getElementById(id);
         if (!el) return [];
+
         try {
             return JSON.parse(el.textContent || "[]");
         } catch (e) {
@@ -773,12 +850,42 @@ document.addEventListener("DOMContentLoaded", function () {
     existingPercentageShares = readJsonScript("percentage-shares-data");
     selectedParticipantIds = readJsonScript("selected-participant-ids-data");
 
+    function money(value) {
+        const num = Number(value || 0);
+        return Number.isFinite(num) ? num : 0;
+    }
+
+    function fixed2(value) {
+        return money(value).toFixed(2);
+    }
+
     function getExistingMap(rows, keyName) {
         const map = {};
+
         rows.forEach(row => {
             map[String(row.friend_id)] = row[keyName] || "";
         });
+
         return map;
+    }
+
+    function saveCurrentVisibleValues() {
+        existingCustomShares = [];
+        existingPercentageShares = [];
+
+        document.querySelectorAll(".custom-share-input").forEach(input => {
+            existingCustomShares.push({
+                friend_id: input.dataset.friendId,
+                amount: input.value.trim()
+            });
+        });
+
+        document.querySelectorAll(".percentage-share-input").forEach(input => {
+            existingPercentageShares.push({
+                friend_id: input.dataset.friendId,
+                percentage: input.value.trim()
+            });
+        });
     }
 
     function getSelectedIds() {
@@ -808,6 +915,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         allMembers.forEach(member => {
             const li = document.createElement("li");
+
             const isChecked =
                 selectedParticipantIds.length === 0 ||
                 selectedParticipantIds.includes(Number(member.id)) ||
@@ -826,7 +934,10 @@ document.addEventListener("DOMContentLoaded", function () {
         dynamicSelectedMembers.appendChild(ul);
 
         dynamicSelectedMembers.querySelectorAll("input[name='selected_participants']").forEach(input => {
-            input.addEventListener("change", renderSplitInputs);
+            input.addEventListener("change", function () {
+                saveCurrentVisibleValues();
+                renderSplitInputs();
+            });
         });
     }
 
@@ -850,6 +961,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div class="custom-member-name">${member.name}</div>
                             ${member.email ? `<div class="custom-member-phone">${member.email}</div>` : ""}
                         </div>
+
                         <div class="col-md-6">
                             <input
                                 type="number"
@@ -887,6 +999,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div class="custom-member-name">${member.name}</div>
                             ${member.email ? `<div class="custom-member-phone">${member.email}</div>` : ""}
                         </div>
+
                         <div class="col-md-6">
                             <input
                                 type="number"
@@ -914,9 +1027,6 @@ document.addEventListener("DOMContentLoaded", function () {
         customWrapper.style.display = splitType === "custom" ? "block" : "none";
         percentageWrapper.style.display = splitType === "percentage" ? "block" : "none";
 
-        hiddenCustomData.value = "";
-        hiddenPercentageData.value = "";
-
         if (splitType === "custom") {
             renderCustomInputs(members);
         }
@@ -928,6 +1038,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function toggleParticipantMode() {
         if (!participantModeSelect) return;
+
+        saveCurrentVisibleValues();
 
         selectedMembersWrapper.style.display =
             participantModeSelect.value === "selected" ? "block" : "none";
@@ -962,7 +1074,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".custom-share-input").forEach(input => {
             data.push({
                 friend_id: input.dataset.friendId,
-                amount: input.value.trim()
+                amount: fixed2(input.value)
             });
         });
 
@@ -975,7 +1087,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".percentage-share-input").forEach(input => {
             data.push({
                 friend_id: input.dataset.friendId,
-                percentage: input.value.trim()
+                percentage: fixed2(input.value)
             });
         });
 
@@ -991,12 +1103,17 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedParticipantIds = [];
             existingCustomShares = [];
             existingPercentageShares = [];
+            hiddenCustomData.value = "";
+            hiddenPercentageData.value = "";
             loadMembers(this.value);
         });
     }
 
     if (splitTypeSelect) {
-        splitTypeSelect.addEventListener("change", renderSplitInputs);
+        splitTypeSelect.addEventListener("change", function () {
+            saveCurrentVisibleValues();
+            renderSplitInputs();
+        });
     }
 
     if (participantModeSelect) {
@@ -1005,9 +1122,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (splitExpenseForm) {
         splitExpenseForm.addEventListener("submit", function (event) {
+            if (!groupSelect || !groupSelect.value) {
+                alert("Please select a group.");
+                event.preventDefault();
+                return;
+            }
+
+            if (!splitTypeSelect || !participantModeSelect) {
+                alert("Split form is not loaded correctly. Please refresh and try again.");
+                event.preventDefault();
+                return;
+            }
+
             const splitType = splitTypeSelect.value;
 
-            if (participantModeSelect && participantModeSelect.value === "selected") {
+            if (participantModeSelect.value === "selected") {
                 if (!getSelectedIds().length) {
                     alert("Please select at least one member.");
                     event.preventDefault();
@@ -1018,7 +1147,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (splitType === "custom") {
                 saveCustomData();
 
-                const total = parseFloat(totalAmountInput.value || "0");
+                const total = money(totalAmountInput.value);
                 let sum = 0;
                 let hasEmpty = false;
 
@@ -1026,8 +1155,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (!input.value.trim()) {
                         hasEmpty = true;
                     }
-                    sum += parseFloat(input.value || "0");
+
+                    sum += money(input.value);
                 });
+
+                sum = Number(sum.toFixed(2));
 
                 if (hasEmpty) {
                     alert("Please enter custom amount for every member.");
@@ -1036,7 +1168,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 if (Math.abs(sum - total) > 0.01) {
-                    alert("Custom split total must match total amount.");
+                    alert(`Custom split total must match total amount. Current split total is ₹${sum.toFixed(2)}.`);
                     event.preventDefault();
                     return;
                 }
@@ -1052,8 +1184,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (!input.value.trim()) {
                         hasEmpty = true;
                     }
-                    sum += parseFloat(input.value || "0");
+
+                    sum += money(input.value);
                 });
+
+                sum = Number(sum.toFixed(2));
 
                 if (hasEmpty) {
                     alert("Please enter percentage for every member.");
@@ -1062,7 +1197,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 if (Math.abs(sum - 100) > 0.01) {
-                    alert("Percentage split total must be exactly 100.");
+                    alert(`Percentage split total must be exactly 100. Current total is ${sum.toFixed(2)}%.`);
                     event.preventDefault();
                     return;
                 }
@@ -1071,7 +1206,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

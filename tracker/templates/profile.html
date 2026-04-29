@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Settings | SplitMate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --bg:#f1f5ff;
+            --card:#ffffff;
+            --text:#0f172a;
+            --muted:#64748b;
+            --line:#e8edf5;
+            --primary:#2563eb;
+            --danger:#ef4444;
+            --danger-soft:#fff1f2;
+            --shadow:0 20px 50px rgba(15,23,42,.08);
+        }
+
+        *{box-sizing:border-box;}
+
+        body{
+            margin:0;
+            min-height:100vh;
+            font-family:'Poppins',sans-serif;
+            background:linear-gradient(180deg,#f1f5ff 0%,#e6edff 100%);
+            color:var(--text);
+        }
+
+        .navbar-custom{
+            position:sticky;
+            top:20px;
+            z-index:1000;
+            width:92%;
+            margin:20px auto;
+            padding:14px 28px;
+            border-radius:28px;
+            background:rgba(255,255,255,.86);
+            backdrop-filter:blur(18px);
+            border:1px solid rgba(255,255,255,.65);
+            box-shadow:0 20px 50px rgba(0,0,0,.08);
+        }
+
+        .logo-icon{
+            width:42px;
+            height:42px;
+            border-radius:12px;
+            background:linear-gradient(135deg,#4f46e5,#9333ea);
+            color:#fff;
+            font-weight:700;
+            font-size:18px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+
+        .logo-text{
+            font-size:26px;
+            font-weight:700;
+            color:#0f172a;
+        }
+
+        .logo-text span{
+            background:linear-gradient(135deg,#4f46e5,#9333ea);
+            -webkit-background-clip:text;
+            background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        .nav-link-custom{
+            position:relative;
+            color:#263247;
+            font-weight:500;
+            text-decoration:none;
+            padding:8px 4px;
+        }
+
+        .nav-link-custom:hover{color:var(--primary);}
+
+        .nav-link-custom::after{
+            content:"";
+            position:absolute;
+            left:0;
+            bottom:-8px;
+            width:0;
+            height:3px;
+            background:var(--primary);
+            border-radius:99px;
+            transition:.25s ease;
+        }
+
+        .nav-link-custom:hover::after,
+        .active-link::after{width:100%;}
+
+        .active-link{
+            color:var(--primary)!important;
+            font-weight:600;
+        }
+
+        .user-badge{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            background:#f8fbff;
+            border:1px solid var(--line);
+            padding:8px 14px 8px 8px;
+            border-radius:999px;
+            text-decoration:none;
+        }
+
+        .user-avatar{
+            width:38px;
+            height:38px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#2563eb,#7c3aed);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+            overflow:hidden;
+        }
+
+        .user-avatar img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+        }
+
+        .avatar-fallback{
+            width:100%;
+            height:100%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+
+        .user-name{
+            font-size:14px;
+            font-weight:600;
+            color:#111827;
+            margin:0;
+        }
+
+        .page-wrap{
+            width:min(1050px,92%);
+            margin:35px auto 60px;
+        }
+
+        .content-grid{
+            display:grid;
+            grid-template-columns:1.1fr .75fr;
+            gap:24px;
+        }
+
+        .card-box{
+            background:#fff;
+            border:1px solid var(--line);
+            border-radius:30px;
+            box-shadow:var(--shadow);
+            padding:32px;
+        }
+
+        .section-title{
+            font-size:22px;
+            font-weight:700;
+            margin-bottom:6px;
+        }
+
+        .section-subtitle{
+            color:var(--muted);
+            font-size:13px;
+            margin-bottom:24px;
+        }
+
+        .form-label{
+            font-weight:600;
+            color:#1e293b;
+            margin-bottom:8px;
+        }
+
+        .input-box{
+            position:relative;
+            margin-bottom:20px;
+        }
+
+        .input-icon{
+            position:absolute;
+            left:16px;
+            top:50%;
+            transform:translateY(-50%);
+            color:#94a3b8;
+            font-size:18px;
+        }
+
+        .form-control{
+            border-radius:17px!important;
+            padding:14px 16px 14px 48px!important;
+            border:1px solid #dbe5f1!important;
+            background:#f8fbff!important;
+            font-size:15px;
+        }
+
+        .form-control:focus{
+            background:#fff!important;
+            border-color:var(--primary)!important;
+            box-shadow:0 0 0 4px rgba(37,99,235,.12)!important;
+        }
+
+        .password-box{
+            background:#f8fbff;
+            border:1px dashed #cbd9ee;
+            border-radius:24px;
+            padding:22px;
+            margin-top:12px;
+        }
+
+        .messages-wrap{
+            margin-bottom:18px;
+        }
+
+        .alert{
+            border-radius:18px;
+            border:none;
+            padding:14px 16px;
+            font-size:14px;
+            font-weight:500;
+        }
+
+        .alert-success{
+            background:#dcfce7;
+            color:#065f46;
+        }
+
+        .alert-error,
+        .alert-danger{
+            background:#fee2e2;
+            color:#991b1b;
+        }
+
+        .alert-info{
+            background:#dbeafe;
+            color:#1e40af;
+        }
+
+        .btn-main{
+            border:none;
+            border-radius:16px;
+            padding:13px 22px;
+            background:linear-gradient(135deg,#2563eb,#3b82f6);
+            color:#fff;
+            font-weight:700;
+            box-shadow:0 12px 24px rgba(37,99,235,.22);
+        }
+
+        .btn-soft{
+            border:none;
+            border-radius:16px;
+            padding:13px 22px;
+            background:#eef3fb;
+            color:#0f172a;
+            font-weight:700;
+            text-decoration:none;
+        }
+
+        .btn-logout{
+            width:100%;
+            border:none;
+            border-radius:18px;
+            padding:14px 20px;
+            background:var(--danger-soft);
+            color:#dc2626;
+            font-weight:800;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+        }
+
+        .profile-circle{
+            width:120px;
+            height:120px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#2563eb,#9333ea);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:44px;
+            font-weight:800;
+            box-shadow:0 18px 40px rgba(37,99,235,.25);
+            overflow:hidden;
+           
+        }
+
+        .profile-circle img{
+           
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+
+        }
+
+        .upload-btn{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            border-radius:999px;
+            padding:10px 16px;
+            background:#eef3fb;
+            color:#2563eb;
+            font-weight:700;
+            cursor:pointer;
+            margin-top:14px;
+        }
+
+        .profile-name{
+            font-size:24px;
+            font-weight:800;
+            color:#0f172a;
+        }
+
+        .profile-email{
+            color:#64748b;
+            font-size:14px;
+            margin-bottom:0;
+        }
+
+        .profile-detail-box{
+            background:#f8fbff;
+            border:1px solid #e8edf5;
+            border-radius:22px;
+            padding:18px;
+        }
+
+        .detail-row{
+            display:flex;
+            justify-content:space-between;
+            gap:12px;
+            padding:14px 0;
+            border-bottom:1px solid #edf2f8;
+        }
+
+        .detail-row:last-child{border-bottom:none;}
+
+        .detail-label{
+            color:var(--muted);
+            font-size:13px;
+            font-weight:600;
+        }
+
+        .detail-value{
+            font-size:14px;
+            font-weight:700;
+            text-align:right;
+            color:#0f172a;
+        }
+
+        .modal-content{
+            border-radius:26px;
+            border:none;
+            box-shadow:0 20px 55px rgba(15,23,42,.18);
+            overflow:hidden;
+        }
+
+        .btn-cancel{
+            background:#f1f5f9;
+            border:none;
+            color:#0f172a;
+            border-radius:14px;
+            font-weight:600;
+            padding:10px 18px;
+        }
+
+        .btn-confirm-logout{
+            background:linear-gradient(135deg,#ef4444,#dc2626);
+            border:none;
+            color:#fff;
+            border-radius:14px;
+            font-weight:600;
+            padding:10px 18px;
+        }
+        .user-badge.active-profile{
+            border:2px solid #2563eb;
+            box-shadow:0 0 0 4px rgba(37,99,235,.15);
+        }
+
+        @media(max-width:900px){
+            .content-grid{grid-template-columns:1fr;}
+        }
+
+        @media(max-width:768px){
+            .navbar-custom{
+                width:95%;
+                padding:16px 18px;
+            }
+
+            .page-wrap{width:95%;}
+            .card-box{padding:24px;}
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'dashboard' %}">
+            <div class="logo-icon">S</div>
+            <span class="logo-text">Split<span>Mate</span></span>
+        </a>
+
+        <div class="d-flex align-items-center gap-4 ms-auto flex-wrap">
+            <a href="{% url 'dashboard' %}" class="nav-link-custom">Dashboard</a>
+            <a href="{% url 'groups_list' %}" class="nav-link-custom">Groups</a>
+            <a href="{% url 'settlements' %}" class="nav-link-custom">Settlements</a>
+
+            <a href="{% url 'profile' %}" 
+             class="user-badge {% if request.path == '/profile/' %}active-profile{% endif %}">
+                <div class="user-avatar">
+                    {% if request.user.profile.photo %}
+                        <img src="{{ request.user.profile.photo.url }}" alt=""
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <span class="avatar-fallback" style="display:none;">
+                            {{ request.user.first_name|default:request.user.username|first|upper }}
+                        </span>
+                    {% else %}
+                        <span class="avatar-fallback">
+                            {{ request.user.first_name|default:request.user.username|first|upper }}
+                        </span>
+                    {% endif %}
+                </div>
+                <p class="user-name">
+                    {{ request.user.first_name|default:request.user.username }}
+                </p>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    {% if messages %}
+        <div class="messages-wrap">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }} app-message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="content-grid">
+
+        <div class="card-box">
+            <div class="section-title">Account Information</div>
+            <div class="section-subtitle">
+                Update your basic profile details. These details are used across groups and settlements.
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <label class="form-label">Full Name</label>
+                <div class="input-box">
+                    <i class="bi bi-person input-icon"></i>
+                    <input type="text" name="full_name" class="form-control"
+                           value="{{ request.user.first_name|default:request.user.username }}" required>
+                </div>
+
+                <label class="form-label">Gmail Address</label>
+                <div class="input-box">
+                    <i class="bi bi-envelope input-icon"></i>
+                    <input type="email" name="email" class="form-control"
+                           value="{{ request.user.email }}" required>
+                </div>
+
+                <label class="form-label">Phone Number</label>
+                <div class="input-box">
+                    <i class="bi bi-phone input-icon"></i>
+                    <input type="text" name="phone" class="form-control"
+                           value="{{ request.user.profile.phone|default:'' }}"
+                           placeholder="+91 9876543210">
+                </div>
+
+                <label class="form-label">Profile Photo</label>
+                <div class="input-box">
+                    <i class="bi bi-image input-icon"></i>
+                    <input type="file" name="photo" class="form-control" accept="image/*">
+                </div>
+
+                <div class="password-box">
+                    <div class="section-title fs-5">Change Password</div>
+                    <div class="section-subtitle">
+                        Leave password fields empty if you do not want to change your password.
+                    </div>
+
+                    <label class="form-label">Current Password</label>
+                    <div class="input-box">
+                        <i class="bi bi-lock input-icon"></i>
+                        <input type="password" name="current_password" class="form-control"
+                               placeholder="Enter current password">
+                    </div>
+
+                    <label class="form-label">New Password</label>
+                    <div class="input-box">
+                        <i class="bi bi-key input-icon"></i>
+                        <input type="password" name="new_password" class="form-control"
+                               placeholder="Create new password">
+                    </div>
+
+                    <label class="form-label">Confirm New Password</label>
+                    <div class="input-box mb-0">
+                        <i class="bi bi-check-circle input-icon"></i>
+                        <input type="password" name="confirm_password" class="form-control"
+                               placeholder="Confirm new password">
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 flex-wrap mt-4">
+                    <button type="submit" class="btn-main">
+                        <i class="bi bi-check2-circle"></i> Save Changes
+                    </button>
+
+                    <a href="{% url 'dashboard' %}" class="btn-soft">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div>
+            <div class="card-box text-center">
+                <div class="profile-circle mx-auto">
+                    {% if request.user.profile.photo %}
+                        <img src="{{ request.user.profile.photo.url }}" alt=""
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <span class="avatar-fallback" style="display:none;">
+                            {{ request.user.first_name|default:request.user.username|first|upper }}
+                        </span>
+                    {% else %}
+                        <span class="avatar-fallback">
+                            {{ request.user.first_name|default:request.user.username|first|upper }}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <h3 class="profile-name mt-3">
+                    {{ request.user.first_name|default:request.user.username }}
+                </h3>
+
+                <p class="profile-email">
+                    {{ request.user.email }}
+                </p>
+
+                <div class="profile-detail-box mt-4">
+                    <div class="detail-row">
+                        <div class="detail-label">Username</div>
+                        <div class="detail-value">{{ request.user.username }}</div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Phone</div>
+                        <div class="detail-value">
+                            {{ request.user.profile.phone|default:'Not added' }}
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value text-success">Active</div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-logout mt-4" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Confirm Logout</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to logout from your account?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+                    No
+                </button>
+
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-confirm-logout">
+                        Yes, Logout
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const photoInput = document.querySelector("input[name='photo']");
+    const imageTargets = document.querySelectorAll(".user-avatar img, .profile-circle img");
+    const fallbackTargets = document.querySelectorAll(".user-avatar .avatar-fallback, .profile-circle .avatar-fallback");
+
+    if (photoInput) {
+        photoInput.addEventListener("change", function () {
+            const file = this.files && this.files[0];
+            if (!file) return;
+
+            const previewUrl = URL.createObjectURL(file);
+
+            imageTargets.forEach(function (img) {
+                img.src = previewUrl;
+                img.style.display = "block";
+            });
+
+            fallbackTargets.forEach(function (fallback) {
+                fallback.style.display = "none";
+            });
+        });
+    }
+
+    setTimeout(function () {
+        document.querySelectorAll(".app-message").forEach(function (message) {
+            message.style.transition = "opacity .35s ease, transform .35s ease";
+            message.style.opacity = "0";
+            message.style.transform = "translateY(-6px)";
+            setTimeout(function () {
+                message.remove();
+            }, 400);
+        });
+    }, 3500);
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

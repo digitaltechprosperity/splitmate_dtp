@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -116,11 +117,30 @@
             align-items:center;
             gap:12px;
             background:#f8fbff;
-            border:1px solid var(--line);
-            padding:8px 14px 8px 8px;
+            border:2px solid transparent;
+            padding:8px 16px 8px 8px;
             border-radius:999px;
-            box-shadow:0 6px 16px rgba(15,23,42,.04);
+            transition:all 0.25s ease;
         }
+
+        /* 🔵 HOVER EFFECT (MAIN PART) */
+        .user-badge:hover{
+            border:2px solid #2563eb;
+            box-shadow:
+                0 0 0 3px rgba(37,99,235,0.25),   /* outer glow */
+                0 4px 12px rgba(37,99,235,0.15);  /* soft shadow */
+            background:#f1f6ff;
+        }
+
+        /* 🔵 ACTIVE (PROFILE PAGE CLICK) */
+        .user-badge.active-profile{
+            border:2px solid #2563eb;
+            box-shadow:
+                0 0 0 3px rgba(37,99,235,0.35),
+                0 6px 16px rgba(37,99,235,0.2);
+            background:#eef4ff;
+        }
+        
 
         .user-avatar{
             width:38px;
@@ -133,8 +153,15 @@
             justify-content:center;
             font-weight:700;
             font-size:15px;
+            overflow:hidden;
+            flex-shrink:0;
         }
-
+        .user-avatar img{
+            width:100%;
+            height:100%;
+            object-fit:cover;   /* keeps image perfect */
+            display:block;
+        }
         .user-name{
             font-size:14px;
             font-weight:600;
@@ -632,6 +659,7 @@
         .logo-text span {
             background: linear-gradient(135deg, #4f46e5, #9333ea);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .stat-icon {
@@ -640,6 +668,37 @@
             right: 20px;
             font-size: 22px;
             opacity: 0.7;
+        }
+        .profile-circle{
+            width:110px;
+            height:110px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#2563eb,#9333ea);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            color:#fff;
+            font-size:44px;
+            font-weight:800;
+        }
+
+        .profile-photo{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+
+        .upload-btn{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            border-radius:999px;
+            padding:10px 16px;
+            background:#eef3fb;
+            color:#2563eb;
+            font-weight:700;
+            cursor:pointer;
         }
     </style>
 </head>
@@ -666,15 +725,21 @@
 <a href="{% url 'settlements' %}" class="nav-link-custom {% if request.path == '/settlements/' %}active-link{% endif %}">
     Settlements
 </a>
-            <div class="user-badge">
-                <div class="user-avatar">{{ request.user.first_name|default:request.user.username|first|upper }}</div>
-                <p class="user-name mb-0">{{ request.user.first_name|default:request.user.username }}
-                </p>
+                       <a href="{% url 'profile' %}"
+        class="user-badge text-decoration-none {% if '/profile' in request.path %}active-profile{% endif %}">
+
+            <div class="user-avatar">
+                {% if request.user.profile.photo %}
+                    <img src="{{ request.user.profile.photo.url }}" alt="Profile">
+                {% else %}
+                    {{ request.user.first_name|default:request.user.username|first|upper }}
+                {% endif %}
             </div>
 
-            <button type="button" class="logout-icon-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                <i class="bi bi-box-arrow-right"></i>
-            </button>
+            <p class="user-name mb-0">
+                {{ request.user.first_name|default:request.user.username }}
+            </p>
+        </a>
         </div>
     </div>
 </nav>
@@ -723,6 +788,9 @@
                 <canvas id="expenseChart" height="150"></canvas>
             </div>
         </div>
+
+
+        
 
         <div class="card-box p-4 p-md-5">
             <div class="section-title">Add Personal Expense</div>
@@ -825,26 +893,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Confirm Logout</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to logout from your account?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-cancel" data-bs-dismiss="modal">No</button>
-                <form method="POST" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-confirm-logout">Yes, Logout</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <script>
 document.getElementById("longterm").addEventListener("change", function () {
@@ -923,3 +972,8 @@ new Chart(ctx, {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+ 
+
+
+
+ 

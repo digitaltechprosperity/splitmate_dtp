@@ -1,265 +1,374 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Members</title>
+    <title>Add Members | SplitMate</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body{
-            margin:0;
-            background:#fff;
-            font-family:Poppins, Arial, sans-serif;
-            color:#2f3437;
-        }
-
-        .mobile-shell{
-            max-width:520px;
-            margin:0 auto;
+            font-family:'Poppins',sans-serif;
+            background:linear-gradient(135deg,#eef4ff,#f8fbff);
             min-height:100vh;
+            color:#0f172a;
+        }
+
+        .app-shell{
+            width:min(1100px,94%);
+            margin:32px auto;
+        }
+
+        .top-card{
             background:#fff;
-            position:relative;
-            padding-bottom:110px;
-        }
-
-        .top-bar{
-            height:72px;
+            border:1px solid #e5edf7;
+            border-radius:28px;
+            padding:28px;
+            box-shadow:0 20px 50px rgba(15,23,42,.08);
             display:flex;
+            justify-content:space-between;
+            gap:20px;
+            flex-wrap:wrap;
             align-items:center;
-            gap:18px;
-            padding:0 22px;
-            border-bottom:1px solid #e5e7eb;
         }
 
-        .back-link{
-            color:#2f3437;
-            font-size:26px;
-            text-decoration:none;
-        }
-
-        .search-title{
-            font-size:20px;
-            color:#7b8188;
-            font-weight:400;
-        }
-
-        .selected-strip{
-            display:flex;
-            gap:18px;
-            overflow-x:auto;
-            padding:22px 20px 18px;
-            border-bottom:1px solid #d8dde3;
-        }
-
-        .selected-person{
-            text-align:center;
-            position:relative;
-            min-width:74px;
-        }
-
-        .selected-avatar{
-            width:64px;
-            height:64px;
-            border-radius:50%;
-            background:linear-gradient(135deg,#2563eb,#14b8a6);
-            color:#fff;
-            display:flex;
+        .back-btn{
+            width:44px;
+            height:44px;
+            border-radius:14px;
+            display:inline-flex;
             align-items:center;
             justify-content:center;
-            font-size:24px;
-            font-weight:700;
-            margin:auto;
-        }
-
-        .remove-dot{
-            position:absolute;
-            right:2px;
-            top:0;
-            width:24px;
-            height:24px;
-            border-radius:50%;
-            background:#8b96a1;
-            color:#fff;
-            font-size:15px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-        }
-
-        .selected-name{
-            margin-top:8px;
-            font-size:14px;
-            color:#444;
-        }
-
-        .add-new-row{
-            display:flex;
-            align-items:center;
-            gap:22px;
-            padding:24px 26px;
+            background:#eef4ff;
+            color:#2563eb;
             text-decoration:none;
-            color:#2f3437;
-            border-bottom:1px solid #eef0f2;
-        }
-
-        .add-new-row i{
-            font-size:26px;
-        }
-
-        .add-new-row span{
             font-size:22px;
-            font-weight:400;
+        }
+
+        .page-title{
+            font-size:30px;
+            font-weight:700;
+            margin:0;
+        }
+
+        .page-subtitle{
+            color:#64748b;
+            margin-top:6px;
+            font-size:14px;
+        }
+
+        .content-grid{
+            display:grid;
+            grid-template-columns:1.2fr .8fr;
+            gap:24px;
+            margin-top:24px;
+        }
+
+        .panel{
+            background:#fff;
+            border:1px solid #e5edf7;
+            border-radius:28px;
+            padding:26px;
+            box-shadow:0 16px 40px rgba(15,23,42,.06);
+        }
+
+        .section-head{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:14px;
+            margin-bottom:20px;
         }
 
         .section-title{
-            padding:24px 26px 8px;
-            color:#34383d;
-            font-size:18px;
-            font-weight:500;
+            font-size:22px;
+            font-weight:700;
+            margin:0;
+        }
+
+        .add-contact-btn{
+            border:none;
+            border-radius:14px;
+            padding:11px 16px;
+            background:linear-gradient(135deg,#2563eb,#3b82f6);
+            color:#fff;
+            text-decoration:none;
+            font-weight:600;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .search-box{
+            position:relative;
+            margin-bottom:18px;
+        }
+
+        .search-box i{
+            position:absolute;
+            left:16px;
+            top:50%;
+            transform:translateY(-50%);
+            color:#94a3b8;
+        }
+
+        .search-input{
+            width:100%;
+            border:1px solid #dbe5f1;
+            border-radius:16px;
+            padding:14px 16px 14px 46px;
+            outline:none;
+        }
+
+        .friend-list{
+            display:grid;
+            gap:12px;
         }
 
         .friend-row{
+            border:1px solid #e5edf7;
+            border-radius:20px;
+            padding:16px;
             display:flex;
             align-items:center;
             justify-content:space-between;
-            gap:14px;
-            padding:14px 26px;
             cursor:pointer;
+            transition:.25s ease;
+            background:#fff;
+        }
+
+        .friend-row:hover{
+            transform:translateY(-2px);
+            box-shadow:0 10px 24px rgba(15,23,42,.07);
+            border-color:#bfdbfe;
         }
 
         .friend-left{
             display:flex;
             align-items:center;
-            gap:18px;
+            gap:14px;
         }
 
         .friend-avatar{
-            width:58px;
-            height:58px;
-            border-radius:50%;
-            background:linear-gradient(135deg,#99f6e4,#064e3b);
+            width:52px;
+            height:52px;
+            border-radius:16px;
+            background:linear-gradient(135deg,#2563eb,#14b8a6);
             color:#fff;
             display:flex;
             align-items:center;
             justify-content:center;
-            font-size:22px;
             font-weight:700;
-            flex-shrink:0;
+            font-size:20px;
         }
 
         .friend-name{
-            font-size:22px;
-            font-weight:400;
-            color:#3f4449;
+            font-size:17px;
+            font-weight:600;
         }
 
         .friend-email{
-            color:#8b949e;
-            font-size:14px;
-            margin-top:3px;
-        }
-
-        .check-icon{
-            font-size:30px;
-            color:#059669;
-            display:none;
+            color:#64748b;
+            font-size:13px;
+            margin-top:2px;
         }
 
         input[type="checkbox"]{
             display:none;
         }
 
-        input[type="checkbox"]:checked + .friend-left + .check-icon{
-            display:block;
-        }
-
-        .bottom-bar{
-            position:fixed;
-            left:50%;
-            bottom:0;
-            transform:translateX(-50%);
-            width:min(520px,100%);
-            background:#f1f2f7;
-            padding:18px 20px 24px;
-        }
-
-        .next-btn{
-            width:100%;
-            border:none;
-            background:#00916e;
+        .check-circle{
+            width:30px;
+            height:30px;
+            border-radius:50%;
+            border:2px solid #cbd5e1;
+            display:flex;
+            align-items:center;
+            justify-content:center;
             color:#fff;
-            border-radius:999px;
-            padding:18px;
-            font-size:22px;
+        }
+
+        input[type="checkbox"]:checked + .friend-left + .check-circle{
+            background:#16a34a;
+            border-color:#16a34a;
+        }
+
+        .selected-list{
+            display:grid;
+            gap:12px;
+        }
+
+        .selected-card{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            border:1px solid #e5edf7;
+            border-radius:18px;
+            padding:14px;
+            background:#f8fbff;
+        }
+
+        .selected-info{
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+
+        .selected-avatar{
+            width:42px;
+            height:42px;
+            border-radius:14px;
+            background:linear-gradient(135deg,#7c3aed,#2563eb);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+        }
+
+        .remove-btn{
+            border:none;
+            background:#fee2e2;
+            color:#dc2626;
+            width:34px;
+            height:34px;
+            border-radius:12px;
+        }
+
+        .empty-state{
+            text-align:center;
+            padding:34px 20px;
+            border:1px dashed #cbd5e1;
+            border-radius:22px;
+            color:#64748b;
+            background:#f8fbff;
+        }
+
+        .bottom-actions{
+            margin-top:24px;
+            display:flex;
+            justify-content:flex-end;
+            gap:12px;
+        }
+
+        .btn-soft{
+            border:none;
+            border-radius:16px;
+            padding:13px 20px;
+            background:#eef3fb;
+            color:#0f172a;
+            text-decoration:none;
             font-weight:600;
         }
 
-        .empty-box{
-            padding:30px 26px;
-            color:#8b949e;
+        .btn-main{
+            border:none;
+            border-radius:16px;
+            padding:13px 24px;
+            background:linear-gradient(135deg,#16a34a,#22c55e);
+            color:#fff;
+            font-weight:700;
+        }
+
+        @media(max-width:900px){
+            .content-grid{
+                grid-template-columns:1fr;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="mobile-shell">
+<div class="app-shell">
     <form method="POST">
         {% csrf_token %}
 
-        <div class="top-bar">
-            <a href="{% url 'group_detail' group.id %}" class="back-link">
-                <i class="bi bi-arrow-left"></i>
-            </a>
-            <div class="search-title">Enter name or Gmail</div>
-        </div>
-
-        <div class="selected-strip" id="selectedStrip">
-            <!-- JS will fill selected friends here -->
-        </div>
-
-        <a href="{% url 'group_add_friend' group.id %}" class="add-new-row">
-            <i class="bi bi-person-plus"></i>
-            <span>Add a new Gmail contact</span>
-        </a>
-
-        <div class="section-title">Friends</div>
-
-        {% if friends %}
-            {% for friend in friends %}
-                <label class="friend-row" data-name="{{ friend.name }}">
-                    <input
-                        type="checkbox"
-                        name="members"
-                        value="{{ friend.id }}"
-                        data-name="{{ friend.name }}"
-                        data-email="{{ friend.email }}"
-                        {% if friend.id|stringformat:"s" in selected_ids %}checked{% endif %}
-                    >
-
-                    <div class="friend-left">
-                        <div class="friend-avatar">
-                            {{ friend.name|first|upper }}
-                        </div>
-                        <div>
-                            <div class="friend-name">{{ friend.name }}</div>
-                            <div class="friend-email">{{ friend.email }}</div>
-                        </div>
+        <div class="top-card">
+            <div class="d-flex align-items-center gap-3">
+                <a href="{% url 'group_detail' group.id %}" class="back-btn">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="page-title">Add Members</h1>
+                    <div class="page-subtitle">
+                        Select existing friends or add a new Gmail contact to this group.
                     </div>
-
-                    <i class="bi bi-check-lg check-icon"></i>
-                </label>
-            {% endfor %}
-        {% else %}
-            <div class="empty-box">
-                No friends available. Click “Add a new Gmail contact”.
+                </div>
             </div>
-        {% endif %}
 
-        <div class="bottom-bar">
-            <button type="submit" class="next-btn">Next</button>
+            <a href="{% url 'group_add_friend' group.id %}" class="add-contact-btn">
+                <i class="bi bi-person-plus"></i>
+                Add Gmail Contact
+            </a>
+        </div>
+
+        <div class="content-grid">
+            <div class="panel">
+                <div class="section-head">
+                    <h2 class="section-title">Available Friends</h2>
+                </div>
+
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="friendSearch" class="search-input" placeholder="Search by name or Gmail">
+                </div>
+
+                <div class="friend-list" id="friendList">
+                    {% if friends %}
+                        {% for friend in friends %}
+                            <label class="friend-row" data-name="{{ friend.name|lower }}" data-email="{{ friend.email|lower }}">
+                                <input
+                                    type="checkbox"
+                                    name="members"
+                                    value="{{ friend.id }}"
+                                    data-name="{{ friend.name }}"
+                                    data-email="{{ friend.email }}"
+                                    {% if friend.id|stringformat:"s" in selected_ids %}checked{% endif %}
+                                >
+
+                                <div class="friend-left">
+                                    <div class="friend-avatar">{{ friend.name|first|upper }}</div>
+                                    <div>
+                                        <div class="friend-name">{{ friend.name }}</div>
+                                        <div class="friend-email">{{ friend.email }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="check-circle">
+                                    <i class="bi bi-check-lg"></i>
+                                </div>
+                            </label>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="bi bi-people fs-2"></i>
+                            <div class="mt-2">No friends available yet.</div>
+                            <small>Add a Gmail contact to continue.</small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="section-head">
+                    <h2 class="section-title">Selected Members</h2>
+                    <span class="badge text-bg-primary" id="selectedCount">0</span>
+                </div>
+
+                <div class="selected-list" id="selectedStrip"></div>
+            </div>
+        </div>
+
+        <div class="bottom-actions">
+            <a href="{% url 'group_detail' group.id %}" class="btn-soft">Cancel</a>
+            <button type="submit" class="btn-main">
+                Continue <i class="bi bi-arrow-right"></i>
+            </button>
         </div>
     </form>
 </div>
@@ -267,22 +376,32 @@
 <script>
     function renderSelected() {
         const strip = document.getElementById("selectedStrip");
+        const count = document.getElementById("selectedCount");
         const checked = document.querySelectorAll('input[name="members"]:checked');
 
         strip.innerHTML = "";
+        count.innerText = checked.length;
 
         checked.forEach(input => {
             const name = input.dataset.name;
+            const email = input.dataset.email;
+
             const item = document.createElement("div");
-            item.className = "selected-person";
+            item.className = "selected-card";
             item.innerHTML = `
-                <div class="remove-dot">×</div>
-                <div class="selected-avatar">${name.charAt(0).toUpperCase()}</div>
-                <div class="selected-name">${name}</div>
+                <div class="selected-info">
+                    <div class="selected-avatar">${name.charAt(0).toUpperCase()}</div>
+                    <div>
+                        <div class="fw-semibold">${name}</div>
+                        <div class="text-muted small">${email}</div>
+                    </div>
+                </div>
+                <button type="button" class="remove-btn">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             `;
 
-            item.querySelector(".remove-dot").addEventListener("click", function(e){
-                e.preventDefault();
+            item.querySelector(".remove-btn").addEventListener("click", function(){
                 input.checked = false;
                 renderSelected();
             });
@@ -291,12 +410,27 @@
         });
 
         if (checked.length === 0) {
-            strip.innerHTML = `<div class="text-muted">Select existing friends or add a new Gmail contact.</div>`;
+            strip.innerHTML = `
+                <div class="empty-state">
+                    <i class="bi bi-person-check fs-2"></i>
+                    <div class="mt-2">No members selected.</div>
+                    <small>Select friends from the left panel.</small>
+                </div>
+            `;
         }
     }
 
     document.querySelectorAll('input[name="members"]').forEach(input => {
         input.addEventListener("change", renderSelected);
+    });
+
+    document.getElementById("friendSearch").addEventListener("input", function(){
+        const query = this.value.toLowerCase().trim();
+        document.querySelectorAll(".friend-row").forEach(row => {
+            const name = row.dataset.name || "";
+            const email = row.dataset.email || "";
+            row.style.display = name.includes(query) || email.includes(query) ? "flex" : "none";
+        });
     });
 
     renderSelected();

@@ -1703,3 +1703,79 @@ class GroupReviewMembersView(LoginRequiredMixin, TemplateView):
 
         return redirect("group_detail", group_id=group.id)
     
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView
+from django.contrib.auth.models import User
+
+from .models import UserProfile
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = "profile.html"
+    login_url = reverse_lazy("login")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile, created = UserProfile.objects.get_or_create(user=self.request.user)
+        context["profile"] = profile
+        return context
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        profile, created = UserProfile.objects.get_or_create(user=user)
+
+        full_name = request.POST.get("full_name", "").strip()
+        email = request.POST.get("email", "").strip().lower()
+        phone = request.POST.get("phone", "").strip()
+
+        current_password = request.POST.get("current_password", "")
+        new_password = request.POST.get("new_password", "")
+        confirm_password = request.POST.get("confirm_password", "")
+
+        if full_name:
+            user.first_name = full_name
+
+        if email:
+            if not email.endswith("@gmail.com"):
+                messages.error(request, "Please enter a valid Gmail address.")
+                return redirect("profile")
+
+            existing = User.objects.filter(email__iexact=email).exclude(id=user.id).exists()
+            if existing:
+                messages.error(request, "This email is already used by another account.")
+                return redirect("profile")
+
+            user.email = email
+
+        profile.phone = phone
+
+        if request.FILES.get("photo"):
+            profile.photo = request.FILES["photo"]
+
+        if current_password or new_password or confirm_password:
+            if not current_password:
+                messages.error(request, "Please enter your current password.")
+                return redirect("profile")
+
+            if not user.check_password(current_password):
+                messages.error(request, "Current password is incorrect.")
+                return redirect("profile")
+
+            if new_password != confirm_password:
+                messages.error(request, "New password and confirm password do not match.")
+                return redirect("profile")
+
+            if len(new_password) < 8:
+                messages.error(request, "Password must be at least 8 characters.")
+                return redirect("profile")
+
+            user.set_password(new_password)
+            update_session_auth_hash(request, user)
+
+        user.save()
+        profile.save()
+
+        messages.success(request, "Profile updated successfully.")
+        return redirect("profile")

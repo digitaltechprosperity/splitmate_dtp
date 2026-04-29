@@ -11,40 +11,20 @@
 
     <style>
         :root{
-            --bg:#f4f7fb;
             --card:#ffffff;
             --text:#162033;
             --muted:#6b7280;
             --line:#e8edf5;
-
             --primary:#2563eb;
-            --primary-soft:#eaf1ff;
-
             --success:#16a34a;
-            --success-soft:#ebfff1;
-
-            --warning:#f59e0b;
-            --warning-soft:#fff7e8;
-
             --violet:#7c3aed;
-            --violet-soft:#f3edff;
-
-            --cyan:#0891b2;
-            --cyan-soft:#e8fbff;
-
-            --rose:#ef4444;
-            --rose-soft:#fff1f2;
-
-            --shadow:0 10px 30px rgba(15, 23, 42, 0.08);
-            --radius:24px;
+            --shadow:0 10px 30px rgba(15,23,42,.08);
         }
 
-        *{
-            box-sizing:border-box;
-        }
+        *{box-sizing:border-box;}
 
         body{
-            background:linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+            background:linear-gradient(180deg,#f1f5ff 0%,#e6edff 100%);
             font-family:'Poppins',sans-serif;
             color:var(--text);
             min-height:100vh;
@@ -54,21 +34,47 @@
             position:sticky;
             top:20px;
             z-index:1000;
-            background:rgba(255,255,255,0.96);
-            backdrop-filter:blur(14px);
-            border:1px solid rgba(255,255,255,0.7);
+            background:rgba(255,255,255,.85);
+            backdrop-filter:blur(18px);
+            border:1px solid rgba(255,255,255,.6);
             border-radius:28px;
             margin:20px auto;
             width:92%;
             padding:14px 28px;
-            box-shadow:0 12px 35px rgba(15,23,42,.08);
+            box-shadow:0 20px 50px rgba(0,0,0,.08);
         }
 
         .navbar-brand{
             font-weight:700;
             font-size:32px;
-            letter-spacing:-0.6px;
             color:#0f172a;
+        }
+
+        .logo-icon{
+            width:42px;
+            height:42px;
+            border-radius:12px;
+            background:linear-gradient(135deg,#4f46e5,#9333ea);
+            color:white;
+            font-weight:700;
+            font-size:18px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            box-shadow:0 8px 20px rgba(79,70,229,.25);
+        }
+
+        .logo-text{
+            font-size:26px;
+            font-weight:700;
+            color:#0f172a;
+        }
+
+        .logo-text span{
+            background:linear-gradient(135deg,#4f46e5,#9333ea);
+            -webkit-background-clip:text;
+            background-clip:text;
+            -webkit-text-fill-color:transparent;
         }
 
         .nav-link-custom{
@@ -102,7 +108,7 @@
         }
 
         .active-link{
-            color:var(--primary) !important;
+            color:var(--primary)!important;
             font-weight:600;
         }
 
@@ -111,10 +117,27 @@
             align-items:center;
             gap:12px;
             background:#f8fbff;
-            border:1px solid var(--line);
-            padding:8px 14px 8px 8px;
+            border:2px solid transparent;
+            padding:8px 16px 8px 8px;
             border-radius:999px;
-            box-shadow:0 6px 16px rgba(15,23,42,.04);
+            transition:all .25s ease;
+        }
+
+        .user-badge:hover{
+            border:2px solid var(--primary);
+            box-shadow:
+                0 0 0 3px rgba(37,99,235,.25),
+                0 4px 12px rgba(37,99,235,.15);
+            background:#f1f6ff;
+            transform:translateY(-1px);
+        }
+
+        .user-badge.active-profile{
+            border:2px solid var(--primary);
+            box-shadow:
+                0 0 0 3px rgba(37,99,235,.35),
+                0 6px 16px rgba(37,99,235,.2);
+            background:#eef4ff;
         }
 
         .user-avatar{
@@ -128,6 +151,15 @@
             justify-content:center;
             font-weight:700;
             font-size:15px;
+            overflow:hidden;
+            flex-shrink:0;
+        }
+
+        .user-avatar img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
         }
 
         .user-name{
@@ -137,28 +169,8 @@
             margin:0;
         }
 
-        .logout-icon-btn{
-            width:46px;
-            height:46px;
-            border-radius:50%;
-            border:none;
-            background:var(--rose-soft);
-            color:var(--rose);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:19px;
-            transition:.25s ease;
-        }
-
-        .logout-icon-btn:hover{
-            background:var(--rose);
-            color:#fff;
-            transform:translateY(-1px);
-        }
-
         .page-wrap{
-            width:min(1140px, 92%);
+            width:min(1140px,92%);
             margin:28px auto 50px;
         }
 
@@ -174,7 +186,7 @@
         .page-title{
             font-size:36px;
             font-weight:700;
-            letter-spacing:-0.8px;
+            letter-spacing:-.8px;
             margin:0;
             color:#0f172a;
         }
@@ -189,7 +201,7 @@
             display:inline-flex;
             align-items:center;
             gap:8px;
-            background:#ffffff;
+            background:white;
             border:1px solid var(--line);
             border-radius:999px;
             padding:10px 16px;
@@ -197,61 +209,6 @@
             font-weight:600;
             color:#334155;
             box-shadow:0 6px 18px rgba(15,23,42,.05);
-        }
-
-        .stats-row{
-            display:grid;
-            grid-template-columns:repeat(3, 1fr);
-            gap:18px;
-            margin-bottom:24px;
-        }
-
-        .stat-card{
-            border:none;
-            border-radius:24px;
-            color:#fff;
-            padding:22px 24px;
-            min-height:132px;
-            box-shadow:var(--shadow);
-            position:relative;
-            overflow:hidden;
-        }
-
-        .stat-card::after{
-            content:"";
-            position:absolute;
-            right:-30px;
-            top:-30px;
-            width:110px;
-            height:110px;
-            border-radius:50%;
-            background:rgba(255,255,255,.10);
-        }
-
-        .stat-card h6{
-            font-size:15px;
-            font-weight:500;
-            margin-bottom:12px;
-            opacity:.95;
-        }
-
-        .stat-card h3{
-            font-size:34px;
-            font-weight:700;
-            margin:0;
-            letter-spacing:-0.5px;
-        }
-
-        .bg-primary-grad{
-            background:linear-gradient(135deg,#2563eb,#1d4ed8);
-        }
-
-        .bg-success-grad{
-            background:linear-gradient(135deg,#16a34a,#15803d);
-        }
-
-        .bg-violet-grad{
-            background:linear-gradient(135deg,#7c3aed,#6d28d9);
         }
 
         .card-box{
@@ -265,7 +222,7 @@
             font-size:28px;
             font-weight:700;
             margin-bottom:6px;
-            letter-spacing:-0.5px;
+            letter-spacing:-.5px;
             color:#0f172a;
         }
 
@@ -275,53 +232,16 @@
             margin-bottom:22px;
         }
 
-        .analysis-bar{
-            display:flex;
-            gap:10px;
-            flex-wrap:wrap;
-            margin-bottom:20px;
-        }
-
-        .analysis-chip{
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            border-radius:999px;
-            padding:9px 14px;
-            font-size:13px;
-            font-weight:600;
-        }
-
-        .analysis-blue{
-            background:#eef6ff;
-            color:#1d4ed8;
-        }
-
-        .analysis-green{
-            background:#eefdf3;
-            color:#15803d;
-        }
-
-        .analysis-orange{
-            background:#fff7e8;
-            color:#c97700;
-        }
-
-        .analysis-violet{
-            background:#f3edff;
-            color:#6d28d9;
-        }
-
         .settlement-list{
             display:grid;
             gap:16px;
         }
 
         .settlement-card{
-            border:1px solid #e8edf5;
+            border:1px solid var(--line);
             border-radius:24px;
             padding:20px 22px;
-            background:#fff;
+            background:white;
             display:flex;
             justify-content:space-between;
             align-items:center;
@@ -331,8 +251,8 @@
         }
 
         .settlement-card:hover{
-            transform:translateY(-2px);
-            box-shadow:0 10px 28px rgba(15,23,42,.06);
+            transform:translateY(-3px);
+            box-shadow:0 12px 30px rgba(37,99,235,.12);
         }
 
         .settlement-left{
@@ -413,71 +333,22 @@
             color:#334155;
         }
 
-        .modal-content{
-            border-radius:26px;
-            border:none;
-            box-shadow:0 20px 55px rgba(15,23,42,.18);
-            overflow:hidden;
-        }
-
-        .modal-header{
-            border-bottom:1px solid #edf2f8;
-            padding:22px 24px 16px;
-        }
-
-        .modal-body{
-            padding:18px 24px 8px;
-            color:#475569;
-        }
-
-        .modal-footer{
-            border-top:1px solid #edf2f8;
-            padding:16px 24px 22px;
-        }
-
-        .btn-cancel{
-            background:#f1f5f9;
-            border:none;
-            color:#0f172a;
-            border-radius:14px;
-            font-weight:600;
-            padding:10px 18px;
-        }
-
-        .btn-confirm-logout{
-            background:linear-gradient(135deg,#ef4444,#dc2626);
-            border:none;
-            color:#fff;
-            border-radius:14px;
-            font-weight:600;
-            padding:10px 18px;
-        }
-
-        @media (max-width: 992px){
-            .stats-row{
-                grid-template-columns:1fr;
+        @media(max-width:768px){
+            .navbar-custom{
+                width:95%;
+                padding:16px 18px;
             }
 
             .navbar-brand{
                 font-size:26px;
             }
 
-            .page-title{
-                font-size:28px;
-            }
-        }
-
-        @media (max-width: 768px){
-            .navbar-custom{
-            position:sticky;
-            top:20px;
-            z-index:1000;
-                width:95%;
-                padding:16px 18px;
-            }
-
             .page-wrap{
                 width:95%;
+            }
+
+            .page-title{
+                font-size:30px;
             }
 
             .settlement-card{
@@ -489,68 +360,48 @@
                 min-width:auto;
             }
         }
-        .logo-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #4f46e5, #9333ea);
-            color: white;
-            font-weight: 700;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
-        }
-
-        .logo-text {
-            font-size: 26px;
-            font-weight: 700;
-            color: #0f172a;
-        }
-
-        .logo-text span {
-            background: linear-gradient(135deg, #4f46e5, #9333ea);
-
-            -webkit-background-clip: text;  /* for Chrome/Safari */
-            background-clip: text;          /* ✅ add this */
-
-            -webkit-text-fill-color: transparent;
-}
     </style>
 </head>
+
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'dashboard' %}">
             <div class="logo-icon">S</div>
-            <span class="logo-text">
-                Split<span>Mate</span>
-            </span>
+            <span class="logo-text">Split<span>Mate</span></span>
         </a>
 
         <div class="d-flex align-items-center gap-4 ms-auto flex-wrap">
-            <a href="{% url 'dashboard' %}" class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">
-    Dashboard
-</a>
+            <a href="{% url 'dashboard' %}"
+               class="nav-link-custom {% if request.path == '/dashboard/' %}active-link{% endif %}">
+                Dashboard
+            </a>
 
-<a href="{% url 'groups_list' %}" class="nav-link-custom {% if '/groups/' in request.path %}active-link{% endif %}">
-    Groups
-</a>
+            <a href="{% url 'groups_list' %}"
+               class="nav-link-custom {% if '/groups/' in request.path %}active-link{% endif %}">
+                Groups
+            </a>
 
-<a href="{% url 'settlements' %}" class="nav-link-custom {% if request.path == '/settlements/' %}active-link{% endif %}">
-    Settlements
-</a>
+            <a href="{% url 'settlements' %}"
+               class="nav-link-custom {% if request.path == '/settlements/' %}active-link{% endif %}">
+                Settlements
+            </a>
 
-            <div class="user-badge">
-                <div class="user-avatar">{{ request.user.first_name|default:request.user.username|first|upper }}</div>
-                <p class="user-name mb-0">{{ request.user.first_name|default:request.user.username }}</p>
-            </div>
+            <a href="{% url 'profile' %}"
+               class="user-badge text-decoration-none {% if '/profile' in request.path %}active-profile{% endif %}">
+                <div class="user-avatar">
+                    {% if request.user.profile.photo %}
+                        <img src="{{ request.user.profile.photo.url }}" alt="Profile">
+                    {% else %}
+                        {{ request.user.first_name|default:request.user.username|first|upper }}
+                    {% endif %}
+                </div>
 
-            <button type="button" class="logout-icon-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                <i class="bi bi-box-arrow-right"></i>
-            </button>
+                <p class="user-name mb-0">
+                    {{ request.user.first_name|default:request.user.username }}
+                </p>
+            </a>
         </div>
     </div>
 </nav>
@@ -559,7 +410,9 @@
     <div class="page-head">
         <div>
             <h1 class="page-title">Settlements</h1>
-            <div class="page-subtitle">Track all pending balances and understand who owes whom through a clean colorful overview.</div>
+            <div class="page-subtitle">
+                Track all pending balances and understand who owes whom through a clean colorful overview.
+            </div>
         </div>
 
         <div class="head-chip">
@@ -568,67 +421,50 @@
         </div>
     </div>
 
-
     <div class="card-box p-4 p-md-5">
         <div class="section-title">Settlement Analysis</div>
-        <div class="section-subtitle">A clear and colorful summary of debtor-creditor relationships across your groups.</div>
-        
+        <div class="section-subtitle">
+            A clear and colorful summary of debtor-creditor relationships across your groups.
+        </div>
 
         {% if settlements %}
-        <div class="settlement-list">
-            {% for item in settlements %}
-            <div class="settlement-card">
-                <div class="settlement-left">
-                    <div class="settlement-avatar">{{ item.debtor|default:"?"|first|upper }}</div>
-                    <div>
-                        <div class="settlement-name">{{ item.debtor }}</div>
-                        <div class="settlement-meta">
-                            owes <strong>{{ item.creditor }}</strong>
+            <div class="settlement-list">
+                {% for item in settlements %}
+                    <div class="settlement-card">
+                        <div class="settlement-left">
+                            <div class="settlement-avatar">
+                                {{ item.debtor|default:"?"|first|upper }}
+                            </div>
+
+                            <div>
+                                <div class="settlement-name">{{ item.debtor }}</div>
+                                <div class="settlement-meta">
+                                    owes <strong>{{ item.creditor }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settlement-amount-wrap">
+                            <div class="settlement-amount">₹{{ item.amount }}</div>
+                            <span class="settlement-tag">
+                                <i class="bi bi-wallet2"></i>
+                                Pending
+                            </span>
                         </div>
                     </div>
-                </div>
-
-                <div class="settlement-amount-wrap">
-                    <div class="settlement-amount">₹{{ item.amount }}</div>
-                    <span class="settlement-tag">
-                        <i class="bi bi-wallet2"></i>
-                        Pending
-                    </span>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-cash-stack"></i>
+                <h5>No settlements yet</h5>
+                <div class="mt-2">
+                    Once shared expenses are added, pending balances will appear here.
                 </div>
             </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state">
-            <i class="bi bi-cash-stack"></i>
-            <h5>No settlements yet</h5>
-            <div class="mt-2">Once shared expenses are added, pending balances will appear here.</div>
-        </div>
         {% endif %}
     </div>
 </div>
 
-<div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Confirm Logout</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to logout from your account?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-cancel" data-bs-dismiss="modal">No</button>
-                <form method="POST" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-confirm-logout">Yes, Logout</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
