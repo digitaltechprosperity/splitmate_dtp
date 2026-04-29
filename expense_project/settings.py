@@ -1,19 +1,21 @@
+
 from pathlib import Path
 import os
 import dj_database_url
 
-import os
-import dj_database_url
-
+# =========================
+# BASE
+# =========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-key")
-
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", ".onrender.com"]
+ALLOWED_HOSTS = ["*"]
 
-
+# =========================
+# APPS
+# =========================
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -25,6 +27,9 @@ INSTALLED_APPS = [
     "rest_framework",
 ]
 
+# =========================
+# MIDDLEWARE
+# =========================
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -36,12 +41,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# =========================
+# URLS & TEMPLATES
+# =========================
 ROOT_URLCONF = "expense_project.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -55,10 +63,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "expense_project.wsgi.application"
 
-
-
-
-
+# =========================
+# DATABASE
+# =========================
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
@@ -77,53 +84,57 @@ else:
         }
     }
 
-print("DATABASE ENGINE:", DATABASES["default"]["ENGINE"])
-
+# =========================
+# PASSWORD VALIDATION
+# =========================
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-
+# =========================
+# INTERNATIONAL
+# =========================
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-
+# =========================
+# STATIC FILES
+# =========================
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
-] if os.path.exists(os.path.join(BASE_DIR, "static")) else []
+    BASE_DIR / "static"
+] if (BASE_DIR / "static").exists() else []
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+# =========================
+# MEDIA FILES
+# =========================
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
+# =========================
+# AUTH
+# =========================
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = "/login/"
 
-
+# =========================
+# SECURITY
+# =========================
 CSRF_TRUSTED_ORIGINS = [
     "https://*.onrender.com",
 ]
-
-
-
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
@@ -134,27 +145,22 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"
 
-
+# =========================
+# EMAIL CONFIG
+# =========================
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
- 
+
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
- 
+
 EMAIL_HOST_USER = "lovableapp13@gmail.com"
-EMAIL_HOST_PASSWORD = "ruhr ydip hnwv wlse"
- 
+EMAIL_HOST_PASSWORD = "ruygrnwdpzfrtrhh"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+EMAIL_TIMEOUT = 30
+
 CORS_ALLOW_ALL_ORIGINS = True
 TWILIO_ACCOUNT_SID = "ACcf5ace66af026d8a9f20aae37c955814"
 TWILIO_AUTH_TOKEN = "beddaca467fe064e9aa4f82a8bb8f44a"
 TWILIO_PHONE_NUMBER = "+12184268634"
-
-print("DATABASE ENGINE:", DATABASES["default"]["ENGINE"])
-print("DATABASE NAME:", DATABASES["default"].get("NAME"))
-
-
-# settings.py
-
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
