@@ -148,8 +148,7 @@ if not DEBUG:
 # =========================
 # EMAIL CONFIG
 # =========================
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
@@ -160,7 +159,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 EMAIL_TIMEOUT = 10
 
-CORS_ALLOW_ALL_ORIGINS = True
-TWILIO_ACCOUNT_SID = "ACcf5ace66af026d8a9f20aae37c955814"
-TWILIO_AUTH_TOKEN = "beddaca467fe064e9aa4f82a8bb8f44a"
-TWILIO_PHONE_NUMBER = "+12184268634"
+# CORS_ALLOW_ALL_ORIGINS = True
+# TWILIO_ACCOUNT_SID = "ACcf5ace66af026d8a9f20aae37c955814"
+# TWILIO_AUTH_TOKEN = "beddaca467fe064e9aa4f82a8bb8f44a"
+# TWILIO_PHONE_NUMBER = "+12184268634"
