@@ -1,10 +1,15 @@
-from pathlib import Path
 import os
+from pathlib import Path
 import dj_database_url
+from dotenv import load_dotenv
+
+# Load variables from .env file for local development
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-key")
+# Security: Always use os.environ.get for secrets
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-key-change-me")
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", ".onrender.com"]
@@ -50,9 +55,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "expense_project.wsgi.application"
 
+# Database Configuration (Postgres for Render, SQLite for Local)
+# Database Configuration
+# Database Configuration
+# Database Configuration
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-if DATABASE_URL:
+if DATABASE_URL and DATABASE_URL.strip():
     DATABASES = {
         "default": dj_database_url.config(
             default=DATABASE_URL,
@@ -61,13 +70,19 @@ if DATABASE_URL:
         )
     }
 else:
+    # Use SQLite and REMOVE any potential extra settings
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-print("DATABASE ENGINE:", DATABASES["default"]["ENGINE"])
+
+# ADD THIS: A safety check to ensure no PostgreSQL settings leaked into SQLite
+if DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
+    if 'OPTIONS' in DATABASES['default']:
+        DATABASES['default'].pop('OPTIONS', None)
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -83,11 +98,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
-] if os.path.exists(os.path.join(BASE_DIR, "static")) else []
-
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")] if os.path.exists(os.path.join(BASE_DIR, "static")) else []
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -96,10 +107,7 @@ LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = "/login/"
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://*.onrender.com",
-]
-
+CSRF_TRUSTED_ORIGINS = ["https://*.onrender.com"]
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 if not DEBUG:
@@ -109,24 +117,22 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"
 
+# Email Configuration
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
-EMAIL_HOST_USER = "lovableapp13@gmail.com"
-EMAIL_HOST_PASSWORD = "ruygrnwdpzfrtrhh"
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_TIMEOUT = 30
 
+# Twilio Configuration
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
+TWILIO_PHONE_NUMBER = os.environ.get("TWILIO_PHONE_NUMBER")
+
 CORS_ALLOW_ALL_ORIGINS = True
-
-TWILIO_ACCOUNT_SID = "ACcf5ace66af026d8a9f20aae37c955814"
-TWILIO_AUTH_TOKEN = "beddaca467fe064e9aa4f82a8bb8f44a"
-TWILIO_PHONE_NUMBER = "+12184268634"
-
-print("DATABASE ENGINE:", DATABASES["default"]["ENGINE"])
-print("DATABASE NAME:", DATABASES["default"].get("NAME"))
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
