@@ -67,7 +67,6 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-
 print("DATABASE ENGINE:", DATABASES["default"]["ENGINE"])
 
 AUTH_PASSWORD_VALIDATORS = [
